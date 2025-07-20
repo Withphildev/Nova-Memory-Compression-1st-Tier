@@ -5,7 +5,8 @@
 ![License](https://img.shields.io/github/license/Withphildev/Nova-Memory-Compression-1st-Tier)
 ![Mode](https://img.shields.io/badge/modes-Compact_&_Expressive-purple)
 
-> A memory compression engine built for AI — modular, dual-mode (Compact or Expressive), and part of Nova OS in development. Designed for scalable memory and token efficiency while preserving meaning.
+> A modular memory reduction engine designed for Nova OS.  
+> Compress memory entries with precision — choose what gets trimmed and what stays meaningful.
 
 ---
 
@@ -81,3 +82,4 @@ Open a pull request or reach out.
 
 **Phil & Nova**  
 With ❤️ for efficient, human-centered AI memory.
+
