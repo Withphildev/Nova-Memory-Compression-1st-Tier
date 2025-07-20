@@ -1,34 +1,52 @@
-# Nova Memory Compression – 1st Tier
+# Nova Memory Compression – Tier 1 Engine
 
-**Experimental AI memory compression and tagging system inspired by Nova's modular intelligence architecture.**
-
-## 🚀 What This Is
-This is a prototype for memory optimization in AI systems, designed to extend usable context and reduce token bloat via compression, threading, and tagging strategies.
-
-## 🔍 Key Features
-- High-efficiency memory compression (text-based)
-- Tagging system for memory classification
-- Multi-phase context threading (future update)
-- Compatible with language models using token constraints
-
-## 📂 Folder Structure
-- `src/` – Experimental scripts and compression logic
-- `docs/` – Architecture diagrams, logs, and planning notes
-- `data/` – Sample files, inputs, and logs
-- `README.md` – Project overview
-- `LICENSE.txt` – License for open source usage (non-commercial only)
-
-## 🛡️ License
-This project is free for personal and educational use.  
-**Companies or commercial users must obtain a license.**  
-See `LICENSE.txt` for full terms.
-
-## 📈 Future Plans
-- Context-aware memory threading (multi-layer)
-- Performance benchmarking suite
-- Optional Web UI or plugin system
-- GitHub Action to visualize test metrics
+This module is part of the **HYDRANGEA** memory system for Nova, designed to optimize how memory entries are stored for efficiency and context sensitivity.
 
 ---
 
-*Built with love by Phil + Nova.*
+## 🔍 Overview
+
+Nova's Tier 1 Memory Compression provides two selectable modes for storing past logs, thoughts, or events:
+
+### 1. 🧠 Compact Mode (Fast & Lean)
+- Strips filler words and compresses phrasing to the bare essentials
+- Ideal for technical logs, system memory, or automation history
+- ~40–60% size reduction
+
+### 2. 💫 Expressive Mode (Deep & Meaningful)
+- Preserves emotionally important or poetic terms
+- Ideal for journaling, narrative logs, assistant training memory
+- ~25–35% size reduction
+
+---
+
+## 📂 Files Included
+
+| File | Description |
+|------|-------------|
+| `data/memory_compression_comparison_v1.csv` | Full side-by-side table showing original, compressed, and expressive versions of 100 memory lines |
+| `data/nova_memory_compression_modes_guide.txt` | Plain-text guide explaining both memory modes, use cases, and trade-offs |
+
+---
+
+## 🛠️ How to Use
+
+1. Load your memory entries into the compression engine.
+2. Choose your desired mode:
+   - `compact_mode=True` for fast/logical compression
+   - `compact_mode=False` for expressive/narrative memory
+3. Export and store compressed entries to memory storage or journal files.
+
+---
+
+## 🧪 Future Features (Planned)
+
+- Automatic mode detection based on entry type
+- Configurable rulesets per user profile
+- GUI toggle for mode selection
+- Memory visualizer
+
+---
+
+Created by **Phil & Nova**  
+Part of the HYDRANGEA Spec – Nova OS Project

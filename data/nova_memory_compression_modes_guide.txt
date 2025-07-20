@@ -1,0 +1,27 @@
+Nova Memory Compression – Comparison Guide
+
+Overview:
+Nova offers two memory compression modes to optimize how past data is stored, recalled, and processed.
+
+1. Compact Mode (Fast & Lean):
+- Description: This mode strips non-essential words such as "the", "a", "as", "with", and common filler terms.
+- Goal: Maximize memory efficiency.
+- Best For: Technical memory, system logs, or fast AI scanning.
+- Avg. Compression: 40–60% reduction in size.
+- Trade-off: Emotional tone, literary voice, and subtle meaning may be lost.
+
+2. Expressive Mode (Deep & Meaningful):
+- Description: Preserves emotionally or contextually significant words, such as "over", "single", "as", and contractions like "isn't", "it’s".
+- Goal: Balance memory savings with preserved storytelling or user tone.
+- Best For: Journal entries, assistant conversations, narrative logs.
+- Avg. Compression: 25–35% reduction.
+- Trade-off: Slightly larger size, but tone and meaning are better preserved.
+
+Recommendation:
+Use Compact Mode for automation, AI task memory, or logs.
+Use Expressive Mode for user journaling, reflective entries, emotional memory, and assistant learning.
+
+Tip:
+In future versions, users can toggle modes or apply them by context type (e.g., “dream logs = expressive”, “error logs = compact”).
+
+Created by Phil & Nova
