@@ -20,18 +20,62 @@ EMOTIONALLY_SIGNIFICANT = {
     "echo", "again", "smiled", "dream", "please", "wait", "chime", "nostalgia"
 }
 
+def split_punctuation(word, punctuation_to_strip):
+    leading = ""
+    trailing = ""
+    
+    start_idx = 0
+    while start_idx < len(word) and word[start_idx] in punctuation_to_strip:
+        leading += word[start_idx]
+        start_idx += 1
+        
+    end_idx = len(word)
+    while end_idx > start_idx and word[end_idx - 1] in punctuation_to_strip:
+        end_idx -= 1
+    trailing = word[end_idx:]
+    
+    cleaned_word = word[start_idx:end_idx]
+    return leading, cleaned_word, trailing
+
 def compress(text, mode="compact"):
     words = text.strip().replace("—", " ").replace("–", " ").replace(".", "").replace(",", "").split()
-    words_lower = [w.lower() for w in words]
-
-    if mode == "compact":
-        return " ".join([w for w in words_lower if w not in FILLER_WORDS])
-    elif mode == "expressive":
-        return " ".join([
-            w for w in words if w.lower() in EMOTIONALLY_SIGNIFICANT or w.lower() not in FILLER_WORDS
-        ])
-    else:
-        raise ValueError("Mode must be 'compact' or 'expressive'")
+    
+    punctuation_to_strip = "“‘”’\"'?.!,;:()[]{}*&%-–—"
+    compressed_words = []
+    
+    pending_leading = ""
+    pending_trailing = ""
+    
+    for w in words:
+        leading, cleaned, trailing = split_punctuation(w, punctuation_to_strip)
+        cleaned_lower = cleaned.lower()
+        
+        is_filler = cleaned_lower in FILLER_WORDS
+        is_emotional = cleaned_lower in EMOTIONALLY_SIGNIFICANT
+        
+        keep = False
+        if mode == "compact":
+            keep = not is_filler
+        elif mode == "expressive":
+            keep = is_emotional or not is_filler
+        else:
+            raise ValueError("Mode must be 'compact' or 'expressive'")
+            
+        if keep:
+            word_to_use = cleaned_lower if mode == "compact" else cleaned
+            full_word = pending_leading + leading + word_to_use + trailing
+            compressed_words.append(full_word)
+            pending_leading = ""
+        else:
+            if leading:
+                pending_leading += leading
+            if trailing:
+                pending_trailing += trailing
+                
+    if pending_trailing and compressed_words:
+        compressed_words[-1] = compressed_words[-1] + pending_trailing
+        
+    return " ".join(compressed_words)
 
 def process_file(input_path, output_path, mode="compact"):
     with open(input_path, "r", encoding="utf-8") as f:
