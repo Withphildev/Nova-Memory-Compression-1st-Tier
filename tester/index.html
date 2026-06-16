@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Memory Compression Tester — HYDRANGEA Tier 1</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="mode-compact">
+    <!-- Glowing Background Anchors (LightLayer Concept) -->
+    <div class="glow-bg glow-purple"></div>
+    <div class="glow-bg glow-mint"></div>
+
+    <div class="app-container">
+        <!-- Sidebar: Relational Memory Benchmarks -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-icon">💾</span>
+                <div class="brand-text">
+                    <h1>Nova Memory</h1>
+                    <span class="version">HYDRANGEA Tier 1</span>
+                </div>
+            </div>
+            
+            <div class="example-section">
+                <h2>✨ Relational Benchmarks</h2>
+                <p class="section-desc">Click an example to load it into the engine:</p>
+                <div class="example-list" id="example-list">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <p>Designed by Phil & Nova</p>
+                <span class="status-badge">Stable v1.0.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Panel -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-titles">
+                    <h2>Memory Compression Sandbox</h2>
+                    <p>Real-time token optimization & semantic preservation</p>
+                </div>
+                
+                <!-- Compact vs Expressive Switcher -->
+                <div class="mode-control">
+                    <span class="mode-label label-compact">🧠 Compact</span>
+                    <button class="toggle-btn" id="mode-toggle" aria-label="Toggle Compression Mode">
+                        <span class="toggle-slider"></span>
+                    </button>
+                    <span class="mode-label label-expressive">💫 Expressive</span>
+                </div>
+            </header>
+
+            <div class="workspace-grid">
+                <!-- Input Panel -->
+                <div class="card panel-input">
+                    <div class="card-header">
+                        <h3>Original Entry</h3>
+                        <span class="token-count" id="input-stats">0 words</span>
+                    </div>
+                    <textarea id="text-input" placeholder="Type a memory or select a benchmark..." autofocus></textarea>
+                </div>
+
+                <!-- Output Panel -->
+                <div class="card panel-output">
+                    <div class="card-header">
+                        <h3>Compressed Output</h3>
+                        <button class="copy-btn" id="copy-output" title="Copy Output">
+                            <span class="copy-icon">📋</span> Copy
+                        </button>
+                    </div>
+                    <div class="output-container">
+                        <textarea id="text-output" readonly placeholder="Compressed memory will appear here..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Dashboard -->
+            <div class="stats-dashboard">
+                <div class="stat-card">
+                    <span class="stat-label">Original Characters</span>
+                    <span class="stat-value" id="stat-orig-chars">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Compressed Characters</span>
+                    <span class="stat-value" id="stat-comp-chars">0</span>
+                </div>
+                <div class="stat-card highlight">
+                    <span class="stat-label">Token Savings</span>
+                    <span class="stat-value" id="stat-savings">0%</span>
+                </div>
+            </div>
+
+            <!-- Transcipher Layer Protocol (TLP) Visualizer -->
+            <div class="card trans-card">
+                <div class="card-header">
+                    <h3>🪞 Transcipher (TLP) Breakdown</h3>
+                    <span class="panel-desc">Real-time compilation insight</span>
+                </div>
+                <div class="trans-visualizer" id="trans-visualizer">
+                    <div class="empty-state">Start typing to see the Transcipher translation...</div>
+                </div>
+                <div class="trans-legend">
+                    <span class="legend-item"><span class="legend-dot dot-kept"></span> Kept Word</span>
+                    <span class="legend-item"><span class="legend-dot dot-emotional"></span> Emotional Anchor</span>
+                    <span class="legend-item"><span class="legend-dot dot-stripped"></span> Stripped Filler</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
