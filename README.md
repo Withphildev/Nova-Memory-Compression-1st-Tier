@@ -64,7 +64,7 @@ python src/memory_compression_prototype.py "Silence isn't empty — it's full of
 ## 🧪 Future Plans
 
 - [x] Web-based compression tester sandbox
-- [ ] Auto-detect entry type for mode switching
+- [x] Auto-detect entry type for mode switching
 - [ ] Integration with Nova’s long-term memory stack
 - [ ] GitHub Actions for auto-compression of logs
 
