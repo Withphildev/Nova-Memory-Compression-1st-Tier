@@ -50,13 +50,11 @@
                     <p>Real-time token optimization & semantic preservation</p>
                 </div>
                 
-                <!-- Compact vs Expressive Switcher -->
-                <div class="mode-control">
-                    <span class="mode-label label-compact">🧠 Compact</span>
-                    <button class="toggle-btn" id="mode-toggle" aria-label="Toggle Compression Mode">
-                        <span class="toggle-slider"></span>
-                    </button>
-                    <span class="mode-label label-expressive">💫 Expressive</span>
+                <!-- 3-Way Segmented Control -->
+                <div class="mode-selector">
+                    <button class="selector-btn active" id="btn-compact" data-mode="compact">🧠 Compact</button>
+                    <button class="selector-btn" id="btn-expressive" data-mode="expressive">💫 Expressive</button>
+                    <button class="selector-btn" id="btn-auto" data-mode="auto">⚡ Auto-Detect</button>
                 </div>
             </header>
 
@@ -74,9 +72,12 @@
                 <div class="card panel-output">
                     <div class="card-header">
                         <h3>Compressed Output</h3>
-                        <button class="copy-btn" id="copy-output" title="Copy Output">
-                            <span class="copy-icon">📋</span> Copy
-                        </button>
+                        <div class="header-right">
+                            <span class="auto-badge" id="auto-badge" style="display: none;">Mode: Compact</span>
+                            <button class="copy-btn" id="copy-output" title="Copy Output">
+                                <span class="copy-icon">📋</span> Copy
+                            </button>
+                        </div>
                     </div>
                     <div class="output-container">
                         <textarea id="text-output" readonly placeholder="Compressed memory will appear here..."></textarea>

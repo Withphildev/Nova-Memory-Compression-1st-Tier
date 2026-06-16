@@ -37,7 +37,37 @@ def split_punctuation(word, punctuation_to_strip):
     cleaned_word = word[start_idx:end_idx]
     return leading, cleaned_word, trailing
 
+def detect_mode(text):
+    import json
+    text_stripped = text.strip()
+    if not text_stripped:
+        return "compact"
+        
+    # Rule 1: JSON detection
+    if (text_stripped.startswith("{") and text_stripped.endswith("}")) or \
+       (text_stripped.startswith("[") and text_stripped.endswith("]")):
+        try:
+            json.loads(text_stripped)
+            return "compact"
+        except ValueError:
+            pass
+            
+    # Rule 2: Log flags or tracebacks (case-insensitive)
+    log_keywords = {
+        "error", "warning", "info", "debug", "traceback", "exception",
+        "stack trace", "exit code", "failed", "stderr", "stdout", "null"
+    }
+    text_lower = text_stripped.lower()
+    for kw in log_keywords:
+        if kw in text_lower:
+            return "compact"
+            
+    return "expressive"
+
 def compress(text, mode="compact"):
+    if mode == "auto":
+        mode = detect_mode(text)
+        
     words = text.strip().replace("—", " ").replace("–", " ").replace(".", "").replace(",", "").split()
     
     punctuation_to_strip = "“‘”’\"'?.!,;:()[]{}*&%-–—"
@@ -59,7 +89,7 @@ def compress(text, mode="compact"):
         elif mode == "expressive":
             keep = is_emotional or not is_filler
         else:
-            raise ValueError("Mode must be 'compact' or 'expressive'")
+            raise ValueError("Mode must be 'compact', 'expressive', or 'auto'")
             
         if keep:
             word_to_use = cleaned_lower if mode == "compact" else cleaned
@@ -77,7 +107,7 @@ def compress(text, mode="compact"):
         
     return " ".join(compressed_words)
 
-def process_file(input_path, output_path, mode="compact"):
+def process_file(input_path, output_path, mode="auto"):
     with open(input_path, "r", encoding="utf-8") as f:
         lines = [line.strip() for line in f if line.strip()]
 
@@ -97,7 +127,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Nova Memory Compression Engine")
     parser.add_argument("input", help="Path to input .txt file")
     parser.add_argument("output", help="Path to save compressed .csv file")
-    parser.add_argument("--mode", choices=["compact", "expressive"], default="compact", help="Compression mode")
+    parser.add_argument("--mode", choices=["compact", "expressive", "auto"], default="auto", help="Compression mode")
     args = parser.parse_args()
 
     process_file(args.input, args.output, args.mode)

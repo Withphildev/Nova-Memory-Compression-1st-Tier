@@ -27,12 +27,15 @@ const BENCHMARK_EXAMPLES = [
     "The gears turned with a gentle hum."
 ];
 
-let currentMode = "compact"; // "compact" or "expressive"
+let currentMode = "auto"; // "compact", "expressive", or "auto"
 
 // DOM Elements
 const textInput = document.getElementById("text-input");
 const textOutput = document.getElementById("text-output");
-const modeToggle = document.getElementById("mode-toggle");
+const btnCompact = document.getElementById("btn-compact");
+const btnExpressive = document.getElementById("btn-expressive");
+const btnAuto = document.getElementById("btn-auto");
+const autoBadge = document.getElementById("auto-badge");
 const copyOutput = document.getElementById("copy-output");
 const exampleList = document.getElementById("example-list");
 const transVisualizer = document.getElementById("trans-visualizer");
@@ -48,6 +51,11 @@ function init() {
     loadExamples();
     setupEventListeners();
     updateStats(0, 0);
+    
+    // Set auto button active on load
+    btnAuto.classList.add("active");
+    btnCompact.classList.remove("active");
+    btnExpressive.classList.remove("active");
 }
 
 // Load preloaded benchmarks to the sidebar
@@ -69,10 +77,14 @@ function loadExamples() {
 function setupEventListeners() {
     textInput.addEventListener("input", runCompression);
     
-    modeToggle.addEventListener("click", () => {
-        currentMode = currentMode === "compact" ? "expressive" : "compact";
-        document.body.className = `mode-${currentMode}`;
-        runCompression();
+    const buttons = [btnCompact, btnExpressive, btnAuto];
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            buttons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentMode = btn.getAttribute("data-mode");
+            runCompression();
+        });
     });
     
     copyOutput.addEventListener("click", () => {
@@ -108,8 +120,41 @@ function splitPunctuation(word) {
     return { leading, cleanedWord, trailing };
 }
 
+// Helper: Auto-detect compression mode based on content
+function detectMode(text) {
+    const trimmed = text.trim();
+    if (!trimmed) return "compact";
+    
+    // Rule 1: JSON detection
+    if ((trimmed.startsWith("{") && trimmed.endsWith("}")) || 
+        (trimmed.startsWith("[") && trimmed.endsWith("]"))) {
+        try {
+            JSON.parse(trimmed);
+            return "compact";
+        } catch (e) {}
+    }
+    
+    // Rule 2: Log flags or tracebacks
+    const logKeywords = [
+        "error", "warning", "info", "debug", "traceback", "exception",
+        "stack trace", "exit code", "failed", "stderr", "stdout", "null"
+    ];
+    const textLower = trimmed.toLowerCase();
+    for (const kw of logKeywords) {
+        if (textLower.includes(kw)) {
+            return "compact";
+        }
+    }
+    
+    return "expressive";
+}
+
 // JavaScript Compression Implementation (matches Python logic)
 function compress(text, mode = "compact") {
+    if (mode === "auto") {
+        mode = detectMode(text);
+    }
+    
     if (!text.trim()) return "";
     
     // Normalize dashes and clean spaces
@@ -159,9 +204,23 @@ function runCompression() {
     if (!rawInput.trim()) {
         textOutput.value = "";
         transVisualizer.innerHTML = `<div class="empty-state">Start typing to see the Transcipher translation...</div>`;
+        autoBadge.style.display = "none";
         updateStats(0, 0);
         return;
     }
+    
+    let activeMode = currentMode;
+    if (currentMode === "auto") {
+        activeMode = detectMode(rawInput);
+        autoBadge.style.display = "inline-block";
+        autoBadge.textContent = `Auto: ${activeMode === "compact" ? "Compact" : "Expressive"}`;
+        autoBadge.className = `auto-badge ${activeMode}`;
+    } else {
+        autoBadge.style.display = "none";
+    }
+    
+    // Update background glow style based on active mode
+    document.body.className = `mode-${activeMode}`;
     
     const output = compress(rawInput, currentMode);
     textOutput.value = output;
@@ -172,11 +231,11 @@ function runCompression() {
     updateStats(origChars, compChars);
     
     // Render Transcipher Visualization
-    renderTranscipher(rawInput);
+    renderTranscipher(rawInput, activeMode);
 }
 
 // Render word-by-word visual tokenization of kept/emotional/stripped words
-function renderTranscipher(text) {
+function renderTranscipher(text, activeMode) {
     transVisualizer.innerHTML = "";
     
     // Normalize and split words
@@ -192,7 +251,7 @@ function renderTranscipher(text) {
         
         let status = "kept";
         
-        if (currentMode === "compact") {
+        if (activeMode === "compact") {
             status = isFiller ? "stripped" : "kept";
         } else {
             status = isFiller && !isEmotional ? "stripped" : (isEmotional ? "emotional" : "kept");
