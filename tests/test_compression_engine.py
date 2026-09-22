@@ -60,6 +60,19 @@ class CompressionEngineTests(unittest.TestCase):
         self.assertIsNone(result.tokenizer)
         self.assertIsNone(result.token_savings_percent)
 
+    def test_punctuation_only_tokens_do_not_desynchronize_trace(self):
+        ellipsis = compress_with_metadata("... see full log", "compact")
+        comma = compress_with_metadata("items , next", "compact")
+
+        self.assertEqual(ellipsis.compressed, "see full log")
+        self.assertEqual(ellipsis.tokens[0].text, "...")
+        self.assertEqual(ellipsis.tokens[0].cleaned, "")
+        self.assertEqual(ellipsis.tokens[0].status, "stripped")
+        self.assertEqual(len(ellipsis.tokens), 4)
+        self.assertEqual(comma.compressed, "items next")
+        self.assertEqual(len(comma.tokens), 3)
+        self.assertEqual(comma.tokens[1].status, "stripped")
+
     def test_invalid_mode_is_rejected_even_for_empty_text(self):
         with self.assertRaises(ValueError):
             compress("", "unknown")  # type: ignore[arg-type]

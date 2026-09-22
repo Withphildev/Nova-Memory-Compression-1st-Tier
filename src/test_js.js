@@ -53,6 +53,8 @@ assert.equal(
 assert.equal(detectMode('{"status":"active"}'), "compact");
 assert.equal(detectMode("ERROR: database unavailable"), "compact");
 assert.equal(detectMode("This information matters."), "expressive");
+assert.equal(compress("... see full log", "compact"), "see full log");
+assert.equal(compress("items , next", "compact"), "items next");
 assert.deepEqual(splitPunctuation("“answer?”"), {
     leading: "“",
     cleanedWord: "answer",

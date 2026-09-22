@@ -137,7 +137,6 @@ def _compress_with_trace(
 ) -> tuple[str, list[TokenDecision], list[str]]:
     normalized_text = text.strip().replace("—", " ").replace("–", " ")
     source_words = normalized_text.split()
-    words = normalized_text.replace(".", "").replace(",", "").split()
     compressed_words: list[str] = []
     decisions: list[TokenDecision] = []
     anchors: list[str] = []
@@ -145,7 +144,15 @@ def _compress_with_trace(
     pending_leading = ""
     pending_trailing = ""
 
-    for source_word, w in zip(source_words, words, strict=True):
+    for source_word in source_words:
+        # Preserve the legacy engine's period/comma removal, but perform it per
+        # token so punctuation-only source tokens cannot disappear from a
+        # separately built list and desynchronize the decision trace.
+        w = source_word.replace(".", "").replace(",", "")
+        if not w:
+            decisions.append(TokenDecision(text=source_word, cleaned="", status="stripped"))
+            continue
+
         leading, cleaned, trailing = split_punctuation(w)
         cleaned_lower = cleaned.lower()
         is_filler = cleaned_lower in FILLER_WORDS
