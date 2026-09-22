@@ -3,7 +3,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.memory_compression_prototype import SystemCodeParser
+from src.memory_compression_prototype import DependencyUnavailableError, SystemCodeParser
 
 TEST_SENTENCES = [
     "The man is driving a red car.",
@@ -22,7 +22,11 @@ def run_tests():
     print("Running Tier 2 System Code Parser Tests")
     print("==================================================")
     
-    parser = SystemCodeParser()
+    try:
+        parser = SystemCodeParser()
+    except DependencyUnavailableError as exc:
+        print(f"[SKIP] {exc}")
+        return
     
     for sentence in TEST_SENTENCES:
         print(f"\nOriginal: \"{sentence}\"")

@@ -1,6 +1,10 @@
 
 # 🧪 Nova Memory Compression – Phase 1 Results Summary
 
+> Historical record: these experiments predate the consolidated Master
+> Memories design and the current reproducible test harness. The figures are
+> preserved for project lineage, not presented as current CI-verified results.
+
 ## 📁 Test Scope:
 We conducted 4 types of memory compression stress tests across various input formats:
 1. Long Narrative

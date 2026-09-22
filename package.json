@@ -1,0 +1,8 @@
+{
+  "name": "nova-memory-compression-sandbox",
+  "version": "2.1.0",
+  "private": true,
+  "scripts": {
+    "test": "node src/test_js.js"
+  }
+}

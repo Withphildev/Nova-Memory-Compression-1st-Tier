@@ -9,24 +9,43 @@ Author: Phil & Nova
 Version: 2.0
 """
 
-import spacy
 import sys
 
+
+class DependencyUnavailableError(RuntimeError):
+    """Raised when the optional Tier 2 NLP dependency is unavailable."""
+
+
 class SystemCodeParser:
-    def __init__(self):
+    def __init__(self, nlp=None, model="en_core_web_sm"):
+        if nlp is not None:
+            self.nlp = nlp
+            return
+
         try:
-            self.nlp = spacy.load("en_core_web_sm")
-        except OSError:
-            print("[!] spaCy model 'en_core_web_sm' not found. Please install it using:")
-            print("    python -m spacy download en_core_web_sm")
-            sys.exit(1)
+            import spacy
+        except ImportError as exc:
+            raise DependencyUnavailableError(
+                "Tier 2 requires spaCy. Install it with: pip install -e '.[tier2]'"
+            ) from exc
+
+        try:
+            self.nlp = spacy.load(model)
+        except OSError as exc:
+            raise DependencyUnavailableError(
+                f"spaCy model '{model}' is not installed. Run: python -m spacy download {model}"
+            ) from exc
 
     def parse(self, text):
         doc = self.nlp(text)
         results = []
         
         # Identify verbs and auxiliary roots of clauses
-        verbs = [t for t in doc if t.pos_ in ("VERB", "AUX") and t.dep_ != "aux" and t.dep_ != "auxpass"]
+        verbs = [
+            t
+            for t in doc
+            if t.pos_ in ("VERB", "AUX") and t.dep_ not in ("aux", "auxpass", "aux:pass")
+        ]
         
         if not verbs:
             # Fallback for simple noun phrases
@@ -46,9 +65,9 @@ class SystemCodeParser:
             
             # Check children of the verb
             for child in verb.children:
-                if child.dep_ in ("nsubj", "nsubjpass"):
+                if child.dep_ in ("nsubj", "nsubjpass", "nsubj:pass"):
                     subject = child.text.upper()
-                elif child.dep_ in ("dobj", "pobj", "attr", "oprd"):
+                elif child.dep_ in ("dobj", "obj", "pobj", "attr", "oprd"):
                     obj = child.text.upper()
                     # Check for adjective modifiers on the object
                     for gc in child.children:
@@ -71,7 +90,7 @@ class SystemCodeParser:
             # Inherit subject from head verb if missing in subordinate clause
             if not subject and verb.head != verb:
                 for child in verb.head.children:
-                    if child.dep_ in ("nsubj", "nsubjpass"):
+                    if child.dep_ in ("nsubj", "nsubjpass", "nsubj:pass"):
                         subject = child.text.upper()
 
             # Compile semantic tags
@@ -90,14 +109,21 @@ class SystemCodeParser:
             
         return results
 
+
 if __name__ == "__main__":
-    parser = SystemCodeParser()
-    if len(sys.argv) > 1:
-        text = " ".join(sys.argv[1:])
-        codes = parser.parse(text)
-        print(f"Original: \"{text}\"")
-        print("System Code Output:")
-        for c in codes:
-            print(f"  {c}")
-    else:
+    if len(sys.argv) <= 1:
         print("Usage: python src/memory_compression_prototype.py <phrase>")
+        sys.exit(2)
+
+    try:
+        parser = SystemCodeParser()
+    except DependencyUnavailableError as exc:
+        print(f"[!] {exc}", file=sys.stderr)
+        sys.exit(1)
+
+    text = " ".join(sys.argv[1:])
+    codes = parser.parse(text)
+    print(f"Original: \"{text}\"")
+    print("System Code Output:")
+    for c in codes:
+        print(f"  {c}")

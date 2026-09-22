@@ -11,6 +11,11 @@ const EMOTIONALLY_SIGNIFICANT = new Set([
 ]);
 
 const PUNCTUATION_TO_STRIP = "“‘”’\"'?.!,;:()[]{}*&%-–—";
+const LOG_PATTERNS = [
+    /\b(?:error|warning|info|debug|traceback|exception|failed|stderr|stdout|null)\b/i,
+    /\bstack\s+trace\b/i,
+    /\bexit\s+code\b/i
+];
 
 // Preloaded relational benchmark examples (from the CSV)
 const BENCHMARK_EXAMPLES = [
@@ -30,21 +35,22 @@ const BENCHMARK_EXAMPLES = [
 let currentMode = "auto"; // "compact", "expressive", or "auto"
 
 // DOM Elements
-const textInput = document.getElementById("text-input");
-const textOutput = document.getElementById("text-output");
-const btnCompact = document.getElementById("btn-compact");
-const btnExpressive = document.getElementById("btn-expressive");
-const btnAuto = document.getElementById("btn-auto");
-const autoBadge = document.getElementById("auto-badge");
-const copyOutput = document.getElementById("copy-output");
-const exampleList = document.getElementById("example-list");
-const transVisualizer = document.getElementById("trans-visualizer");
+const hasDOM = typeof document !== "undefined";
+const textInput = hasDOM ? document.getElementById("text-input") : null;
+const textOutput = hasDOM ? document.getElementById("text-output") : null;
+const btnCompact = hasDOM ? document.getElementById("btn-compact") : null;
+const btnExpressive = hasDOM ? document.getElementById("btn-expressive") : null;
+const btnAuto = hasDOM ? document.getElementById("btn-auto") : null;
+const autoBadge = hasDOM ? document.getElementById("auto-badge") : null;
+const copyOutput = hasDOM ? document.getElementById("copy-output") : null;
+const exampleList = hasDOM ? document.getElementById("example-list") : null;
+const transVisualizer = hasDOM ? document.getElementById("trans-visualizer") : null;
 
 // Stats Elements
-const inputStats = document.getElementById("input-stats");
-const statOrigChars = document.getElementById("stat-orig-chars");
-const statCompChars = document.getElementById("stat-comp-chars");
-const statSavings = document.getElementById("stat-savings");
+const inputStats = hasDOM ? document.getElementById("input-stats") : null;
+const statOrigChars = hasDOM ? document.getElementById("stat-orig-chars") : null;
+const statCompChars = hasDOM ? document.getElementById("stat-comp-chars") : null;
+const statSavings = hasDOM ? document.getElementById("stat-savings") : null;
 
 // Initialize application
 function init() {
@@ -135,15 +141,8 @@ function detectMode(text) {
     }
     
     // Rule 2: Log flags or tracebacks
-    const logKeywords = [
-        "error", "warning", "info", "debug", "traceback", "exception",
-        "stack trace", "exit code", "failed", "stderr", "stdout", "null"
-    ];
-    const textLower = trimmed.toLowerCase();
-    for (const kw of logKeywords) {
-        if (textLower.includes(kw)) {
-            return "compact";
-        }
+    for (const pattern of LOG_PATTERNS) {
+        if (pattern.test(trimmed)) return "compact";
     }
     
     return "expressive";
@@ -293,4 +292,10 @@ function updateStats(orig, comp) {
 }
 
 // Launch on page load
-window.addEventListener("DOMContentLoaded", init);
+if (typeof window !== "undefined") {
+    window.addEventListener("DOMContentLoaded", init);
+}
+
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = { compress, detectMode, splitPunctuation };
+}

@@ -62,6 +62,8 @@ def run_tests():
             if not m['expressive_match']:
                 print(f"  [Expressive] CSV: \"{m['csv_expressive']}\" | NEW: \"{m['new_expressive']}\"")
             print()
+
+        sys.exit(1)
             
 if __name__ == "__main__":
     run_tests()

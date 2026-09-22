@@ -1,14 +1,23 @@
-"""
-compression_engine.py
+"""Nova Memory Compression Engine – HYDRANGEA Tier 1.
 
-Nova Memory Compression Engine – Tier 1
-Supports Compact and Expressive memory modes.
-
-Author: Phil & Nova
-Version: 1.0
+Tier 1 is intentionally lossy: it demonstrates semantic distillation and
+token/character reduction, not exact reconstruction.  A later Bloom layer can
+expand a gist only when the original fragment or linked pattern evidence has
+been retained elsewhere.
 """
 
+from __future__ import annotations
+
+import argparse
 import csv
+import json
+import re
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import Literal
+
+CompressionMode = Literal["compact", "expressive", "auto"]
+ResolvedMode = Literal["compact", "expressive"]
 
 FILLER_WORDS = {
     "the", "a", "an", "of", "on", "in", "with", "to", "as", "that", "this",
@@ -20,7 +29,40 @@ EMOTIONALLY_SIGNIFICANT = {
     "echo", "again", "smiled", "dream", "please", "wait", "chime", "nostalgia"
 }
 
-def split_punctuation(word, punctuation_to_strip):
+PUNCTUATION_TO_STRIP = "“‘”’\"'?.!,;:()[]{}*&%-–—"
+LOG_PATTERNS = (
+    re.compile(r"\b(?:error|warning|info|debug|traceback|exception|failed|stderr|stdout|null)\b", re.IGNORECASE),
+    re.compile(r"\bstack\s+trace\b", re.IGNORECASE),
+    re.compile(r"\bexit\s+code\b", re.IGNORECASE),
+)
+
+
+@dataclass(frozen=True)
+class CompressionResult:
+    """Bloom-ready Tier 1 result.
+
+    ``original`` is deliberately retained in this demonstration envelope.
+    Production systems may replace it with a durable source reference, but
+    must not claim exact reversal from ``compressed`` alone.
+    """
+
+    schema_version: str
+    requested_mode: CompressionMode
+    resolved_mode: ResolvedMode
+    original: str
+    compressed: str
+    original_characters: int
+    compressed_characters: int
+    original_words: int
+    compressed_words: int
+    character_savings_percent: float
+    reversible_from_gist: bool = False
+
+    def to_dict(self) -> dict[str, object]:
+        return asdict(self)
+
+
+def split_punctuation(word: str, punctuation_to_strip: str = PUNCTUATION_TO_STRIP) -> tuple[str, str, str]:
     leading = ""
     trailing = ""
     
@@ -37,8 +79,7 @@ def split_punctuation(word, punctuation_to_strip):
     cleaned_word = word[start_idx:end_idx]
     return leading, cleaned_word, trailing
 
-def detect_mode(text):
-    import json
+def detect_mode(text: str) -> ResolvedMode:
     text_stripped = text.strip()
     if not text_stripped:
         return "compact"
@@ -52,32 +93,35 @@ def detect_mode(text):
         except ValueError:
             pass
             
-    # Rule 2: Log flags or tracebacks (case-insensitive)
-    log_keywords = {
-        "error", "warning", "info", "debug", "traceback", "exception",
-        "stack trace", "exit code", "failed", "stderr", "stdout", "null"
-    }
-    text_lower = text_stripped.lower()
-    for kw in log_keywords:
-        if kw in text_lower:
+    # Rule 2: Log flags or tracebacks. Word boundaries prevent false matches
+    # such as "information" being classified as a log because it contains
+    # "info".
+    for pattern in LOG_PATTERNS:
+        if pattern.search(text_stripped):
             return "compact"
             
     return "expressive"
 
-def compress(text, mode="compact"):
+def _validate_mode(mode: str) -> CompressionMode:
+    if mode not in {"compact", "expressive", "auto"}:
+        raise ValueError("Mode must be 'compact', 'expressive', or 'auto'")
+    return mode  # type: ignore[return-value]
+
+
+def compress(text: str, mode: CompressionMode = "compact") -> str:
+    mode = _validate_mode(mode)
     if mode == "auto":
         mode = detect_mode(text)
         
     words = text.strip().replace("—", " ").replace("–", " ").replace(".", "").replace(",", "").split()
     
-    punctuation_to_strip = "“‘”’\"'?.!,;:()[]{}*&%-–—"
     compressed_words = []
     
     pending_leading = ""
     pending_trailing = ""
     
     for w in words:
-        leading, cleaned, trailing = split_punctuation(w, punctuation_to_strip)
+        leading, cleaned, trailing = split_punctuation(w)
         cleaned_lower = cleaned.lower()
         
         is_filler = cleaned_lower in FILLER_WORDS
@@ -88,9 +132,6 @@ def compress(text, mode="compact"):
             keep = not is_filler
         elif mode == "expressive":
             keep = is_emotional or not is_filler
-        else:
-            raise ValueError("Mode must be 'compact', 'expressive', or 'auto'")
-            
         if keep:
             word_to_use = cleaned_lower if mode == "compact" else cleaned
             full_word = pending_leading + leading + word_to_use + trailing
@@ -107,27 +148,89 @@ def compress(text, mode="compact"):
         
     return " ".join(compressed_words)
 
-def process_file(input_path, output_path, mode="auto"):
-    with open(input_path, "r", encoding="utf-8") as f:
+
+def compress_with_metadata(text: str, mode: CompressionMode = "auto") -> CompressionResult:
+    requested_mode = _validate_mode(mode)
+    resolved_mode: ResolvedMode = detect_mode(text) if requested_mode == "auto" else requested_mode
+    compressed = compress(text, resolved_mode)
+    original_words = len(text.split())
+    compressed_words = len(compressed.split())
+    original_characters = len(text)
+    compressed_characters = len(compressed)
+    savings = 0.0
+    if original_characters:
+        savings = round((1 - compressed_characters / original_characters) * 100, 2)
+
+    return CompressionResult(
+        schema_version="hydrangea.tier1.v1",
+        requested_mode=requested_mode,
+        resolved_mode=resolved_mode,
+        original=text,
+        compressed=compressed,
+        original_characters=original_characters,
+        compressed_characters=compressed_characters,
+        original_words=original_words,
+        compressed_words=compressed_words,
+        character_savings_percent=savings,
+    )
+
+
+def process_file(
+    input_path: str | Path,
+    output_path: str | Path,
+    mode: CompressionMode = "auto",
+    output_format: Literal["csv", "jsonl"] = "csv",
+) -> None:
+    input_path = Path(input_path)
+    output_path = Path(output_path)
+    with input_path.open("r", encoding="utf-8") as f:
         lines = [line.strip() for line in f if line.strip()]
 
-    output_data = [("Original", "Compressed")]
-    for line in lines:
-        compressed = compress(line, mode)
-        output_data.append((line, compressed))
-
-    with open(output_path, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
-        writer.writerows(output_data)
+    results = [compress_with_metadata(line, mode) for line in lines]
+    if output_format == "csv":
+        with output_path.open("w", newline="", encoding="utf-8-sig") as f:
+            writer = csv.writer(f)
+            writer.writerow(
+                (
+                    "Original",
+                    "Resolved Mode",
+                    "Compressed",
+                    "Original Words",
+                    "Compressed Words",
+                    "Character Savings Percent",
+                )
+            )
+            for result in results:
+                writer.writerow(
+                    (
+                        result.original,
+                        result.resolved_mode,
+                        result.compressed,
+                        result.original_words,
+                        result.compressed_words,
+                        result.character_savings_percent,
+                    )
+                )
+    elif output_format == "jsonl":
+        with output_path.open("w", encoding="utf-8") as f:
+            for result in results:
+                f.write(json.dumps(result.to_dict(), ensure_ascii=False) + "\n")
+    else:
+        raise ValueError("Output format must be 'csv' or 'jsonl'")
 
     print(f"[✓] Compressed file saved to: {output_path}")
 
-if __name__ == "__main__":
-    import argparse
+
+def main() -> None:
     parser = argparse.ArgumentParser(description="Run Nova Memory Compression Engine")
     parser.add_argument("input", help="Path to input .txt file")
-    parser.add_argument("output", help="Path to save compressed .csv file")
+    parser.add_argument("output", help="Path to save compressed output")
     parser.add_argument("--mode", choices=["compact", "expressive", "auto"], default="auto", help="Compression mode")
+    parser.add_argument("--format", choices=["csv", "jsonl"], default="csv", dest="output_format", help="Output envelope format")
     args = parser.parse_args()
 
-    process_file(args.input, args.output, args.mode)
+    process_file(args.input, args.output, args.mode, args.output_format)
+
+
+if __name__ == "__main__":
+    main()

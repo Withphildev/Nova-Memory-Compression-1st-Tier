@@ -1,5 +1,11 @@
 Nova Memory Compression – Comparison Guide
 
+Scope note:
+Tier 1 is intentionally lossy. It creates a compact gist for token-budget
+experiments; it cannot reconstruct exact original wording by itself. Blooming
+requires a retained source fragment or linked evidence. Percentage ranges below
+are historical observations and vary by corpus and tokenizer.
+
 Overview:
 Nova offers two memory compression modes to optimize how past data is stored, recalled, and processed.
 

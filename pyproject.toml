@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nova-memory-compression"
+version = "2.1.0"
+description = "HYDRANGEA Tier 1 semantic memory compression reference implementation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE.txt" }
+authors = [{ name = "Phil & Nova" }]
+dependencies = []
+
+[project.optional-dependencies]
+tier2 = ["spacy>=3.7,<4"]
+
+[project.scripts]
+nova-memory-compress = "logic.compression_engine:main"
+
+[tool.setuptools.packages.find]
+include = ["logic", "src"]

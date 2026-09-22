@@ -1,43 +1,21 @@
-// Mock the DOM
-global.document = {
-    getElementById: (id) => ({
-        addEventListener: () => {},
-        value: "the red car was driving down the road",
-        textContent: "",
-        innerHTML: "",
-        appendChild: (child) => {
-            // console.log("child appended", child);
-        }
-    }),
-    createElement: (tag) => ({
-        addEventListener: () => {},
-        appendChild: () => {},
-        classList: { add: () => {} },
-        textContent: "",
-        className: ""
-    })
-};
-global.window = {
-    addEventListener: (event, callback) => {
-        if (event === "DOMContentLoaded") {
-            // callback();
-        }
-    }
-};
+const assert = require("node:assert/strict");
+const { compress, detectMode, splitPunctuation } = require("../tester/app.js");
 
-// Require the app.js
-const fs = require('fs');
-const path = require('path');
-const appCode = fs.readFileSync(path.join(__dirname, '../tester/app.js'), 'utf-8');
+assert.equal(
+    compress("the red car was driving down the road", "compact"),
+    "red car driving down road"
+);
+assert.equal(
+    compress("Nova smiled as the data flowed in.", "expressive"),
+    "Nova smiled as data flowed in"
+);
+assert.equal(detectMode('{"status":"active"}'), "compact");
+assert.equal(detectMode("ERROR: database unavailable"), "compact");
+assert.equal(detectMode("This information matters."), "expressive");
+assert.deepEqual(splitPunctuation("“answer?”"), {
+    leading: "“",
+    cleanedWord: "answer",
+    trailing: "?”"
+});
 
-// Run it in this context
-eval(appCode);
-
-// Now run the functions directly
-try {
-    console.log("Testing compress('the red car was driving down the road'):");
-    const result = compress("the red car was driving down the road", "compact");
-    console.log("Result:", result);
-} catch (err) {
-    console.error("Error running compress:", err);
-}
+console.log("JavaScript compression tests passed.");
