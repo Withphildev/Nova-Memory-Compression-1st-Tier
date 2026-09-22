@@ -8,10 +8,12 @@
   treating ordinary words such as `information` as logs.
 - Metadata envelopes retain their source fragment and declare that a gist is
   not independently reversible.
+- Tier 1 decision traces and anchors flow into a combined Tier 2 envelope while
+  dependency parsing still uses the retained original.
 - CSV and JSONL exports are exercised in temporary directories.
 - Tier 2 tag extraction is tested without requiring a downloaded spaCy model.
 - The browser engine has direct Node.js assertions for compression, mode
-  detection, and punctuation splitting.
+  detection, punctuation splitting, and all 100 historical fixture rows.
 
 ## Historical results
 

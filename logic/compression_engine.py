@@ -18,6 +18,7 @@ from typing import Literal
 
 CompressionMode = Literal["compact", "expressive", "auto"]
 ResolvedMode = Literal["compact", "expressive"]
+TokenStatus = Literal["kept", "stripped", "emotional"]
 
 FILLER_WORDS = {
     "the", "a", "an", "of", "on", "in", "with", "to", "as", "that", "this",
@@ -40,6 +41,19 @@ LOG_PATTERNS = (
 )
 
 
+class TokenizerUnavailableError(RuntimeError):
+    """Raised when optional tokenizer metrics were requested but unavailable."""
+
+
+@dataclass(frozen=True)
+class TokenDecision:
+    """A Tier 1 classification captured before the words are rejoined."""
+
+    text: str
+    cleaned: str
+    status: TokenStatus
+
+
 @dataclass(frozen=True)
 class CompressionResult:
     """Bloom-ready Tier 1 result.
@@ -59,7 +73,13 @@ class CompressionResult:
     original_words: int
     compressed_words: int
     character_savings_percent: float
+    tokens: list[TokenDecision]
+    anchors: list[str]
     reversible_from_gist: bool = False
+    tokenizer: str | None = None
+    original_tokens: int | None = None
+    compressed_tokens: int | None = None
+    token_savings_percent: float | None = None
 
     def to_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -111,51 +131,95 @@ def _validate_mode(mode: str) -> CompressionMode:
     return mode  # type: ignore[return-value]
 
 
-def compress(text: str, mode: CompressionMode = "compact") -> str:
-    mode = _validate_mode(mode)
-    if mode == "auto":
-        mode = detect_mode(text)
-        
-    words = text.strip().replace("—", " ").replace("–", " ").replace(".", "").replace(",", "").split()
-    
-    compressed_words = []
-    
+def _compress_with_trace(
+    text: str,
+    mode: ResolvedMode,
+) -> tuple[str, list[TokenDecision], list[str]]:
+    normalized_text = text.strip().replace("—", " ").replace("–", " ")
+    source_words = normalized_text.split()
+    words = normalized_text.replace(".", "").replace(",", "").split()
+    compressed_words: list[str] = []
+    decisions: list[TokenDecision] = []
+    anchors: list[str] = []
+    seen_anchors: set[str] = set()
     pending_leading = ""
     pending_trailing = ""
-    
-    for w in words:
+
+    for source_word, w in zip(source_words, words, strict=True):
         leading, cleaned, trailing = split_punctuation(w)
         cleaned_lower = cleaned.lower()
-        
         is_filler = cleaned_lower in FILLER_WORDS
         is_emotional = cleaned_lower in EMOTIONALLY_SIGNIFICANT
-        
-        keep = False
+
         if mode == "compact":
             keep = not is_filler
-        elif mode == "expressive":
+        else:
             keep = is_emotional or not is_filler
+
+        status: TokenStatus
+        if not keep:
+            status = "stripped"
+        elif is_emotional:
+            status = "emotional"
+        else:
+            status = "kept"
+        decisions.append(TokenDecision(text=source_word, cleaned=cleaned_lower, status=status))
+
         if keep:
             word_to_use = cleaned_lower if mode == "compact" else cleaned
             full_word = pending_leading + leading + word_to_use + trailing
             compressed_words.append(full_word)
             pending_leading = ""
+            if is_emotional and cleaned_lower not in seen_anchors:
+                anchors.append(cleaned_lower)
+                seen_anchors.add(cleaned_lower)
         else:
             if leading:
                 pending_leading += leading
             if trailing:
                 pending_trailing += trailing
-                
+
     if pending_trailing and compressed_words:
         compressed_words[-1] = compressed_words[-1] + pending_trailing
-        
-    return " ".join(compressed_words)
+
+    return " ".join(compressed_words), decisions, anchors
 
 
-def compress_with_metadata(text: str, mode: CompressionMode = "auto") -> CompressionResult:
+def compress(text: str, mode: CompressionMode = "compact") -> str:
     requested_mode = _validate_mode(mode)
     resolved_mode: ResolvedMode = detect_mode(text) if requested_mode == "auto" else requested_mode
-    compressed = compress(text, resolved_mode)
+    compressed, _, _ = _compress_with_trace(text, resolved_mode)
+    return compressed
+
+
+def _count_tokens(text: str, tokenizer: str) -> int:
+    try:
+        import tiktoken
+    except ImportError as exc:
+        raise TokenizerUnavailableError(
+            "Tokenizer metrics require the optional dependency: pip install -e '.[tokens]'"
+        ) from exc
+
+    try:
+        encoding = tiktoken.get_encoding(tokenizer)
+    except ValueError as exc:
+        raise ValueError(f"Unknown tiktoken encoding: {tokenizer}") from exc
+    except Exception as exc:
+        raise TokenizerUnavailableError(
+            f"Could not load tiktoken encoding '{tokenizer}'. Its first use may "
+            "require network access to cache the encoding data."
+        ) from exc
+    return len(encoding.encode(text))
+
+
+def compress_with_metadata(
+    text: str,
+    mode: CompressionMode = "auto",
+    tokenizer: str | None = None,
+) -> CompressionResult:
+    requested_mode = _validate_mode(mode)
+    resolved_mode: ResolvedMode = detect_mode(text) if requested_mode == "auto" else requested_mode
+    compressed, decisions, anchors = _compress_with_trace(text, resolved_mode)
     original_words = len(text.split())
     compressed_words = len(compressed.split())
     original_characters = len(text)
@@ -164,8 +228,18 @@ def compress_with_metadata(text: str, mode: CompressionMode = "auto") -> Compres
     if original_characters:
         savings = round((1 - compressed_characters / original_characters) * 100, 2)
 
+    original_tokens = None
+    compressed_tokens = None
+    token_savings = None
+    if tokenizer:
+        original_tokens = _count_tokens(text, tokenizer)
+        compressed_tokens = _count_tokens(compressed, tokenizer)
+        token_savings = 0.0
+        if original_tokens:
+            token_savings = round((1 - compressed_tokens / original_tokens) * 100, 2)
+
     return CompressionResult(
-        schema_version="hydrangea.tier1.v1",
+        schema_version="hydrangea.tier1.v2",
         requested_mode=requested_mode,
         resolved_mode=resolved_mode,
         original=text,
@@ -175,6 +249,12 @@ def compress_with_metadata(text: str, mode: CompressionMode = "auto") -> Compres
         original_words=original_words,
         compressed_words=compressed_words,
         character_savings_percent=savings,
+        tokens=decisions,
+        anchors=anchors,
+        tokenizer=tokenizer,
+        original_tokens=original_tokens,
+        compressed_tokens=compressed_tokens,
+        token_savings_percent=token_savings,
     )
 
 
@@ -183,13 +263,14 @@ def process_file(
     output_path: str | Path,
     mode: CompressionMode = "auto",
     output_format: Literal["csv", "jsonl"] = "csv",
+    tokenizer: str | None = None,
 ) -> None:
     input_path = Path(input_path)
     output_path = Path(output_path)
     with input_path.open("r", encoding="utf-8") as f:
         lines = [line.strip() for line in f if line.strip()]
 
-    results = [compress_with_metadata(line, mode) for line in lines]
+    results = [compress_with_metadata(line, mode, tokenizer) for line in lines]
     if output_format == "csv":
         with output_path.open("w", newline="", encoding="utf-8-sig") as f:
             writer = csv.writer(f)
@@ -201,6 +282,10 @@ def process_file(
                     "Original Words",
                     "Compressed Words",
                     "Character Savings Percent",
+                    "Tokenizer",
+                    "Original Tokens",
+                    "Compressed Tokens",
+                    "Token Savings Percent",
                 )
             )
             for result in results:
@@ -212,6 +297,10 @@ def process_file(
                         result.original_words,
                         result.compressed_words,
                         result.character_savings_percent,
+                        result.tokenizer or "",
+                        result.original_tokens if result.original_tokens is not None else "",
+                        result.compressed_tokens if result.compressed_tokens is not None else "",
+                        result.token_savings_percent if result.token_savings_percent is not None else "",
                     )
                 )
     elif output_format == "jsonl":
@@ -230,9 +319,13 @@ def main() -> None:
     parser.add_argument("output", help="Path to save compressed output")
     parser.add_argument("--mode", choices=["compact", "expressive", "auto"], default="auto", help="Compression mode")
     parser.add_argument("--format", choices=["csv", "jsonl"], default="csv", dest="output_format", help="Output envelope format")
+    parser.add_argument("--tokenizer", help="Optional tiktoken encoding name, for example cl100k_base")
     args = parser.parse_args()
 
-    process_file(args.input, args.output, args.mode, args.output_format)
+    try:
+        process_file(args.input, args.output, args.mode, args.output_format, args.tokenizer)
+    except (TokenizerUnavailableError, ValueError) as exc:
+        parser.error(str(exc))
 
 
 if __name__ == "__main__":

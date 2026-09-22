@@ -62,16 +62,31 @@ It must not silently rewrite source events.
 
 ## Tier 1 envelope
 
-`compress_with_metadata()` returns `hydrangea.tier1.v1` with:
+`compress_with_metadata()` returns `hydrangea.tier1.v2` with:
 
 - requested and resolved modes;
 - the original fragment (or, in a future store, a durable source reference);
 - the compressed gist;
+- a per-word `kept`, `stripped`, or `emotional` decision trace;
+- deduplicated emotional anchors that were actually retained;
 - character and word metrics;
+- optional named-tokenizer metrics;
 - `reversible_from_gist: false`.
 
 The CLI can emit this envelope as JSON Lines. CSV output includes the original,
-resolved mode, compressed gist, and reduction metrics.
+resolved mode, compressed gist, and reduction metrics. Tokenizer metrics are
+only populated when a tokenizer is explicitly requested.
+
+## Tier 1 → Tier 2 contract
+
+`SystemCodeParser.parse_result()` accepts a `CompressionResult` and returns a
+`hydrangea.tier2.v1` combined envelope. It always dependency-parses the retained
+original because the gist has intentionally lost grammar. For each generated
+system code it reports exact matches against the Tier 1 anchors.
+
+Exact matching is a deliberate trust boundary: Tier 2 does not invent salience
+for unrelated attributes, and it does not currently stem or semantically expand
+anchors. Those behaviors require an explicit, separately evaluated policy.
 
 ## Trust invariants
 
@@ -87,14 +102,15 @@ resolved mode, compressed gist, and reduction metrics.
 ```text
 text line
   → mode detection
-  → lexical filtering
-  → compact gist
-  → CSV or JSONL envelope
+  → lexical filtering + decision capture
+  → compact gist + emotional anchors
+  → hydrangea.tier1.v2 envelope
 
 optional experiment:
-text
-  → spaCy dependency parse
-  → system-code tags
+tier1 envelope
+  → spaCy parses retained original
+  → system-code tags + exact anchor matches
+  → hydrangea.tier2.v1 envelope
 ```
 
 ## Out of scope

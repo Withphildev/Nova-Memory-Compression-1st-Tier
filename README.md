@@ -1,7 +1,7 @@
 # Nova Memory Compression — HYDRANGEA Tier 1
 
 [![Tests](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml/badge.svg)](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml)
-![Version](https://img.shields.io/badge/version-v2.1.0-blue)
+![Version](https://img.shields.io/badge/version-v2.2.0-blue)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey)
 
 A reference implementation of the first semantic-distillation layer from the
@@ -78,8 +78,20 @@ Create a Bloom-ready JSON Lines envelope that retains each original fragment:
 nova-memory-compress input.txt output.jsonl --mode auto --format jsonl
 ```
 
-Each envelope explicitly records `reversible_from_gist: false`, the resolved
-mode, the retained original, compressed gist, and reduction metrics.
+Each `hydrangea.tier1.v2` envelope explicitly records
+`reversible_from_gist: false`, the resolved mode, retained original, compressed
+gist, per-word decisions, deduplicated emotional anchors, and reduction metrics.
+
+Optional tokenizer-specific metrics are available without replacing the
+deterministic character and word measurements:
+
+```bash
+python -m pip install -e '.[tokens]'
+nova-memory-compress input.txt output.jsonl --format jsonl --tokenizer cl100k_base
+```
+
+The first use of a tiktoken encoding may require network access so tiktoken can
+cache its encoding table locally.
 
 ### Browser sandbox
 
@@ -98,6 +110,22 @@ python -m pip install -e '.[tier2]'
 python -m spacy download en_core_web_sm
 python src/memory_compression_prototype.py "The man is driving a red car."
 ```
+
+Tier 2 can also consume the richer Tier 1 result while parsing the retained
+original—not the grammatically incomplete gist:
+
+```python
+from logic import compress_with_metadata
+from src import SystemCodeParser
+
+tier1 = compress_with_metadata("Nova will remember the echo.", "expressive")
+tier2 = SystemCodeParser().parse_result(tier1)
+print(tier2.to_dict())
+```
+
+The combined `hydrangea.tier2.v1` envelope carries Tier 1 provenance forward
+and records exact matches between system-code terms and Tier 1 anchors. It does
+not infer that an ordinary subject, object, or attribute is emotionally salient.
 
 ## Tests
 

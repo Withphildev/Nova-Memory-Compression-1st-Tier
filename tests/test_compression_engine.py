@@ -3,8 +3,10 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from logic.compression_engine import (
+    TokenizerUnavailableError,
     compress,
     compress_with_metadata,
     detect_mode,
@@ -41,10 +43,31 @@ class CompressionEngineTests(unittest.TestCase):
         self.assertGreater(result.character_savings_percent, 0)
         self.assertEqual(result.original_words, 7)
         self.assertEqual(result.compressed_words, 4)
+        self.assertEqual(result.schema_version, "hydrangea.tier1.v2")
+        self.assertEqual(
+            [decision.status for decision in result.tokens],
+            ["stripped", "kept", "stripped", "kept", "stripped", "kept", "kept"],
+        )
+        self.assertEqual(result.tokens[-1].text, "car.")
+        self.assertEqual(result.tokens[-1].cleaned, "car")
+        self.assertEqual(result.anchors, [])
+
+    def test_expressive_metadata_retains_real_emotional_anchors(self):
+        result = compress_with_metadata("Nova smiled as the echo returned.", "expressive")
+
+        self.assertEqual(result.anchors, ["smiled", "as", "echo"])
+        self.assertEqual(result.tokens[2].status, "emotional")
+        self.assertIsNone(result.tokenizer)
+        self.assertIsNone(result.token_savings_percent)
 
     def test_invalid_mode_is_rejected_even_for_empty_text(self):
         with self.assertRaises(ValueError):
             compress("", "unknown")  # type: ignore[arg-type]
+
+    def test_tokenizer_metrics_fail_clearly_when_extra_is_missing(self):
+        with mock.patch.dict("sys.modules", {"tiktoken": None}):
+            with self.assertRaisesRegex(TokenizerUnavailableError, r"\.\[tokens\]"):
+                compress_with_metadata("A small memory.", tokenizer="cl100k_base")
 
     def test_file_exports_are_bloom_ready(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -62,9 +85,11 @@ class CompressionEngineTests(unittest.TestCase):
             self.assertEqual(rows[0]["Resolved Mode"], "compact")
 
             payload = json.loads(jsonl_output.read_text(encoding="utf-8"))
-            self.assertEqual(payload["schema_version"], "hydrangea.tier1.v1")
+            self.assertEqual(payload["schema_version"], "hydrangea.tier1.v2")
             self.assertEqual(payload["original"], "The man is driving a red car.")
             self.assertFalse(payload["reversible_from_gist"])
+            self.assertEqual(len(payload["tokens"]), 7)
+            self.assertEqual(payload["anchors"], [])
 
 
 if __name__ == "__main__":

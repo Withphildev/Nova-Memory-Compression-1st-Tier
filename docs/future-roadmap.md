@@ -5,6 +5,8 @@
 - Compact, Expressive, and Auto Tier 1 modes.
 - Browser sandbox with deterministic character-savings metrics.
 - Bloom-ready JSONL metadata envelope.
+- Tier 1 decision traces, emotional anchors, and Tier 2 handoff envelope.
+- Optional named-tokenizer measurements.
 - Historical 100-row regression suite.
 - Assertive Python and JavaScript tests.
 - Optional, dependency-injected Tier 2 parser.
@@ -15,8 +17,8 @@
 - Publish a versioned filler-word and emotional-anchor policy.
 - Add Unicode and multilingual fixtures.
 - Add property tests for punctuation and whitespace invariants.
-- Benchmark with explicitly named tokenizers instead of extrapolating from
-  character counts.
+- Benchmark across multiple explicitly named tokenizers instead of
+  extrapolating from character counts.
 
 ## Then: define the memory-node schema
 
