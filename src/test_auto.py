@@ -1,3 +1,10 @@
+"""Optional human-readable Auto-mode smoke test.
+
+The assertive coverage used by CI lives in tests/test_compression_engine.py.
+This script remains as a manual diagnostic because its printed classifications
+are useful while tuning the detector.
+"""
+
 import sys
 import os
 

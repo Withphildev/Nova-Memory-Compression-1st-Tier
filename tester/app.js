@@ -5,6 +5,9 @@ const FILLER_WORDS = new Set([
     "it", "is", "was", "and", "but", "or", "just", "for", "from", "by"
 ]);
 
+// Overlap with FILLER_WORDS is intentional: Compact removes these words,
+// whereas Expressive retains them when they carry relational or emotional
+// cadence. Keep this policy mirrored in logic/compression_engine.py.
 const EMOTIONALLY_SIGNIFICANT = new Set([
     "over", "single", "as", "in", "with", "hum", "isn't", "it's", "remember",
     "echo", "again", "smiled", "dream", "please", "wait", "chime", "nostalgia"

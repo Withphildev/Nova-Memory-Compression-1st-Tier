@@ -1,3 +1,10 @@
+"""Optional manual spaCy smoke test for the experimental Tier 2 parser.
+
+The dependency-free assertive coverage used by CI lives in
+tests/test_system_code_parser.py. This script exercises the installed spaCy
+model and prints its output for human review.
+"""
+
 import sys
 import os
 

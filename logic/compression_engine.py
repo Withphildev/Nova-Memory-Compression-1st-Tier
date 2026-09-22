@@ -24,6 +24,9 @@ FILLER_WORDS = {
     "it", "is", "was", "and", "but", "or", "just", "for", "from", "by"
 }
 
+# Some words intentionally appear in both sets. Compact mode removes them as
+# filler, while Expressive mode retains them when they carry relational or
+# emotional cadence. Keep this policy mirrored in tester/app.js.
 EMOTIONALLY_SIGNIFICANT = {
     "over", "single", "as", "in", "with", "hum", "isn't", "it's", "remember",
     "echo", "again", "smiled", "dream", "please", "wait", "chime", "nostalgia"

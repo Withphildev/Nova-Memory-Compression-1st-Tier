@@ -111,6 +111,10 @@ GitHub Actions runs these checks on every push and pull request. Tier 2's parser
 logic is tested with an injected dependency tree, so the normal CI path does not
 need to download a language model.
 
+`src/test_auto.py` and `src/test_tier2.py` are optional, human-readable manual
+diagnostics. Assertive CI coverage lives in `tests/`; the Tier 2 diagnostic also
+requires the optional spaCy model.
+
 ## Safety and scope
 
 - Do not replace source memories with a Tier 1 gist unless exact wording is
