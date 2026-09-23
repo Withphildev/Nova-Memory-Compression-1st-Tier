@@ -13,6 +13,8 @@
 - Assertive Python and JavaScript tests.
 - Optional, dependency-injected Tier 2 parser.
 - GitHub Actions validation.
+- Tier 3 durable schemas with separate ambiguity and contradiction links.
+- Injectable local embedding boundary with pinned model provenance.
 
 ## Next: stabilize Tier 1
 
@@ -22,13 +24,15 @@
 - Benchmark across multiple explicitly named tokenizers instead of
   extrapolating from character counts.
 
-## Then: define the memory-node schema
+## Next: calibrate the pattern layer
 
-- Durable source IDs and provenance.
-- Gist, system-code, and pattern-node fields.
-- Evidence links for every Bloom operation.
-- Append-only interpretation and re-weighting history.
-- Contradiction and ambiguity representation.
+- Expand the fixture with labeled same-pattern, ambiguous, contradictory, and
+  unrelated pairs; the Tier 1 historical fixture is insufficient.
+- Benchmark the approved MiniLM model against the expanded fixture.
+- Review failure cases before setting merge and ambiguity thresholds.
+- Keep auto-merge disabled until a versioned calibrated policy is approved.
+- Treat contradiction links as schema-only until a separate detector is
+  designed and evaluated.
 
 ## Later: Bloom and Reverse Bloom prototypes
 

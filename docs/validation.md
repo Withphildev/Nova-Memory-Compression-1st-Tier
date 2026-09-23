@@ -17,6 +17,9 @@
   clauses, coordination, and negation.
 - The browser engine has direct Node.js assertions for compression, mode
   detection, punctuation splitting, and all 100 historical fixture rows.
+- Tier 3 schema invariants, serialization, original-text embedding, model
+  provenance, and injected-provider failures are covered without downloading a
+  model.
 
 ## Historical results
 
@@ -34,3 +37,5 @@ must not be presented as current CI evidence.
 - Bloom provenance and hallucination tests;
 - privacy, deletion, and source-retention tests;
 - performance and failure-mode measurements.
+- a larger labeled Tier 3 similarity fixture before threshold calibration;
+- separately evaluated contradiction detection before automatic links.

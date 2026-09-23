@@ -1,7 +1,7 @@
 # Nova Memory Compression — HYDRANGEA Tier 1
 
 [![Tests](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml/badge.svg)](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml)
-![Version](https://img.shields.io/badge/version-v2.3.0-blue)
+![Version](https://img.shields.io/badge/version-v2.4.0-blue)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey)
 
 A reference implementation of the first semantic-distillation layer from the
@@ -20,8 +20,9 @@ The larger design separates four responsibilities:
    retaining content words and selected emotional anchors.
 2. **System-code layer (experimental prototype):** express subject, action,
    object, and attributes in a machine-oriented form.
-3. **Pattern layer (future work):** consolidate repeated instances into linked
-   concept nodes.
+3. **Pattern layer (foundation implemented):** persist linked candidates,
+   versioned policy, and auditable local embeddings. Clustering and calibrated
+   merging remain future work.
 4. **Bloom layer (future work):** expand a gist using retained source fragments,
    pattern evidence, and context. Reverse Blooming later re-weights or reframes
    older nodes when new insight arrives.
@@ -47,6 +48,7 @@ savings. Actual token counts vary by model and tokenizer.
 | --- | --- |
 | `logic/compression_engine.py` | Tier 1 engine, metadata envelope, and CLI |
 | `src/memory_compression_prototype.py` | Experimental spaCy Tier 2 parser |
+| `src/pattern_layer.py` | Tier 3 schemas and injectable local embedder |
 | `tester/` | Browser-based Tier 1 sandbox |
 | `tests/` | Assertive Python unit and regression tests |
 | `data/memory_compression_comparison_v1.csv` | Historical 100-row benchmark |
@@ -134,6 +136,23 @@ produce `[SUB:MAN][ACT:DRIVE][OBJ:CAR]`; an omitted agent is represented as
 inside a local relative clause to the noun modified by that clause. This is not
 general coreference resolution and does not follow pronouns across clauses or
 sentences.
+
+### Tier 3 pattern foundation
+
+Tier 3 now defines persistent pattern-memory, policy, relation, history, and
+node schemas plus an injectable embedding interface. The optional local adapter
+uses `sentence-transformers/all-MiniLM-L6-v2` with a caller-supplied pinned
+revision:
+
+```bash
+python -m pip install -e '.[tier3]'
+```
+
+The approved promotion threshold is three linked instances, but similarity
+thresholds remain unset and automatic merging is disabled until a larger
+labeled fixture is calibrated. Contradiction links are schema-only in this
+release; there is no contradiction detector yet. See
+[the Tier 3 foundation](docs/tier3-pattern-layer.md).
 
 ## Tests
 

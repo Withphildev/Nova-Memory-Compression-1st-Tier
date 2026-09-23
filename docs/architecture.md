@@ -39,11 +39,16 @@ bounded local heuristic for WH relative pronouns inside `relcl` dependencies.
 That heuristic is not general coreference resolution: it does not chase
 pronouns across clauses or sentences.
 
-### 3. Pattern layer: planned
+### 3. Pattern layer: foundation implemented
 
-Repeated instances should become a pattern node with links back to every
-supporting source. Consolidation may reduce repetition, but it must not destroy
-the evidence required for trustworthy recall.
+Tier 3 now defines versioned persistence schemas and an injectable local
+embedding boundary. Repeated instances can be represented as candidates or
+promoted pattern nodes with links back to every supporting source. The approved
+promotion threshold is three instances. Similarity calibration, clustering,
+and automatic merging are not implemented yet.
+
+Ambiguity and contradiction links are distinct. Contradiction detection is
+schema-only: no classifier currently creates those links automatically.
 
 ### 4. Bloom layer: planned
 
@@ -116,13 +121,19 @@ tier1 envelope
   → spaCy parses retained original
   → system-code tags + exact anchor matches
   → hydrangea.tier2.v1 envelope
+
+optional Tier 3 foundation:
+tier1 + optional tier2 envelope
+  → durable PatternMemory retaining original text
+  → injectable local embedder with pinned model revision
+  → auditable EmbeddedMemory for future calibration
 ```
 
 ## Out of scope
 
 - production memory persistence;
-- semantic-vector clustering;
+- semantic-vector clustering and calibrated similarity thresholds;
 - sensory encoding;
 - source-fragment encryption;
-- pattern-node governance;
+- automatic pattern merging and contradiction detection;
 - Bloom and Reverse Bloom execution.
