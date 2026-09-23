@@ -1,0 +1,64 @@
+pair_id,label,cluster_a,text_a,cluster_b,text_b,notes
+1,same_pattern,echo_recall,Nova remembered the echo from before.,echo_recall,The old echo came back to Nova's memory.,
+2,same_pattern,echo_recall,Nova remembered the echo from before.,echo_recall,Nova recalled the sound that had happened earlier.,
+3,same_pattern,echo_recall,Nova remembered the echo from before.,echo_recall,That earlier echo returned to Nova's mind.,
+4,same_pattern,echo_recall,The old echo came back to Nova's memory.,echo_recall,Nova recalled the sound that had happened earlier.,
+5,same_pattern,echo_recall,The old echo came back to Nova's memory.,echo_recall,That earlier echo returned to Nova's mind.,
+6,same_pattern,echo_recall,Nova recalled the sound that had happened earlier.,echo_recall,That earlier echo returned to Nova's mind.,
+7,same_pattern,calm_near_water,Phil felt calm near the water.,calm_near_water,Being by the water put Phil at ease.,
+8,same_pattern,calm_near_water,Phil felt calm near the water.,calm_near_water,The water's edge left Phil feeling peaceful.,
+9,same_pattern,calm_near_water,Phil felt calm near the water.,calm_near_water,Phil's nerves settled whenever he was near water.,
+10,same_pattern,calm_near_water,Being by the water put Phil at ease.,calm_near_water,The water's edge left Phil feeling peaceful.,
+11,same_pattern,calm_near_water,Being by the water put Phil at ease.,calm_near_water,Phil's nerves settled whenever he was near water.,
+12,same_pattern,calm_near_water,The water's edge left Phil feeling peaceful.,calm_near_water,Phil's nerves settled whenever he was near water.,
+13,same_pattern,kept_promise,Nova kept the promise she made to Phil.,kept_promise,Nova did not forget what she had promised him.,
+14,same_pattern,kept_promise,Nova kept the promise she made to Phil.,kept_promise,She followed through on the promise to Phil.,
+15,same_pattern,kept_promise,Nova kept the promise she made to Phil.,kept_promise,The promise to Phil was honored by Nova.,
+16,same_pattern,kept_promise,Nova did not forget what she had promised him.,kept_promise,She followed through on the promise to Phil.,
+17,same_pattern,kept_promise,Nova did not forget what she had promised him.,kept_promise,The promise to Phil was honored by Nova.,
+18,same_pattern,kept_promise,She followed through on the promise to Phil.,kept_promise,The promise to Phil was honored by Nova.,
+19,same_pattern,small_smile,Nova smiled at the small moment of connection.,small_smile,A quiet moment of connection made Nova smile.,
+20,same_pattern,small_smile,Nova smiled at the small moment of connection.,small_smile,Nova's smile appeared during that small shared moment.,
+21,same_pattern,small_smile,Nova smiled at the small moment of connection.,small_smile,That brief connection brought a smile to Nova.,
+22,same_pattern,small_smile,A quiet moment of connection made Nova smile.,small_smile,Nova's smile appeared during that small shared moment.,
+23,same_pattern,small_smile,A quiet moment of connection made Nova smile.,small_smile,That brief connection brought a smile to Nova.,
+24,same_pattern,small_smile,Nova's smile appeared during that small shared moment.,small_smile,That brief connection brought a smile to Nova.,
+25,same_pattern,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,nostalgia_early_nova,An early version of Nova left Phil feeling nostalgic.,
+26,same_pattern,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,nostalgia_early_nova,Phil looked back fondly on Nova's earliest form.,
+27,same_pattern,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,nostalgia_early_nova,Remembering early Nova filled Phil with nostalgia.,
+28,same_pattern,nostalgia_early_nova,An early version of Nova left Phil feeling nostalgic.,nostalgia_early_nova,Phil looked back fondly on Nova's earliest form.,
+29,same_pattern,nostalgia_early_nova,An early version of Nova left Phil feeling nostalgic.,nostalgia_early_nova,Remembering early Nova filled Phil with nostalgia.,
+30,same_pattern,nostalgia_early_nova,Phil looked back fondly on Nova's earliest form.,nostalgia_early_nova,Remembering early Nova filled Phil with nostalgia.,
+31,same_pattern,waiting_anticipation,"Nova waited for the chime, please let it come.",waiting_anticipation,Nova was anticipating the chime any moment now.,
+32,same_pattern,waiting_anticipation,"Nova waited for the chime, please let it come.",waiting_anticipation,The wait for the chime stretched on for Nova.,
+33,same_pattern,waiting_anticipation,"Nova waited for the chime, please let it come.",waiting_anticipation,"Nova sat in anticipation, waiting for the chime.",
+34,same_pattern,waiting_anticipation,Nova was anticipating the chime any moment now.,waiting_anticipation,The wait for the chime stretched on for Nova.,
+35,same_pattern,waiting_anticipation,Nova was anticipating the chime any moment now.,waiting_anticipation,"Nova sat in anticipation, waiting for the chime.",
+36,same_pattern,waiting_anticipation,The wait for the chime stretched on for Nova.,waiting_anticipation,"Nova sat in anticipation, waiting for the chime.",
+37,ambiguous,echo_recall,Nova remembered the echo from before.,echo_recall_near_miss,"Something about that old sound tugged at Nova's memory, though she couldn't quite place it.","independently worded near-miss, not a minimal edit"
+38,ambiguous,calm_near_water,Phil felt calm near the water.,calm_near_water_partial,Being near water settled Phil down some days and unsettled him on others.,"independently worded near-miss, not a minimal edit"
+39,ambiguous,kept_promise,Nova kept the promise she made to Phil.,kept_promise_partial,"Nova did most of what she'd promised Phil, though one piece never got done.","independently worded near-miss, not a minimal edit"
+40,ambiguous,small_smile,Nova smiled at the small moment of connection.,small_smile_delayed,Something in that shared moment almost drew a smile out of Nova.,"independently worded near-miss, not a minimal edit"
+41,ambiguous,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,nostalgia_early_nova_mixed,Thinking back on early Nova stirred up more than one feeling in Phil.,"independently worded near-miss, not a minimal edit"
+42,ambiguous,waiting_anticipation,"Nova waited for the chime, please let it come.",waiting_anticipation_given_up,Nova's attention had drifted elsewhere long before the chime ever arrived.,"independently worded near-miss, not a minimal edit"
+43,contradiction,calm_near_water,Phil felt calm near the water.,contradiction,The sound of water put Phil on edge every time.,"independently worded opposite meaning, not a minimal edit"
+44,contradiction,kept_promise,Nova kept the promise she made to Phil.,contradiction,"Whatever Nova had promised Phil, none of it came to pass.","independently worded opposite meaning, not a minimal edit"
+45,contradiction,echo_recall,Nova remembered the echo from before.,contradiction,That sound from before had completely slipped Nova's mind.,"independently worded opposite meaning, not a minimal edit"
+46,contradiction,small_smile,Nova smiled at the small moment of connection.,contradiction,That moment of connection left Nova cold.,"independently worded opposite meaning, not a minimal edit"
+47,contradiction,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,contradiction,Phil was glad to have left that early version of Nova behind.,"independently worded opposite meaning, not a minimal edit"
+48,contradiction,waiting_anticipation,"Nova waited for the chime, please let it come.",contradiction,Nova hoped the chime would stay silent.,"independently worded opposite meaning, not a minimal edit"
+49,unrelated,echo_recall,Nova remembered the echo from before.,calm_near_water,Phil felt calm near the water.,
+50,unrelated,echo_recall,Nova remembered the echo from before.,kept_promise,Nova kept the promise she made to Phil.,
+51,unrelated,echo_recall,Nova remembered the echo from before.,small_smile,Nova smiled at the small moment of connection.,
+52,unrelated,echo_recall,Nova remembered the echo from before.,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,
+53,unrelated,echo_recall,Nova remembered the echo from before.,waiting_anticipation,"Nova waited for the chime, please let it come.",
+54,unrelated,calm_near_water,Phil felt calm near the water.,kept_promise,Nova kept the promise she made to Phil.,
+55,unrelated,calm_near_water,Phil felt calm near the water.,small_smile,Nova smiled at the small moment of connection.,
+56,unrelated,calm_near_water,Phil felt calm near the water.,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,
+57,unrelated,calm_near_water,Phil felt calm near the water.,waiting_anticipation,"Nova waited for the chime, please let it come.",
+58,unrelated,kept_promise,Nova kept the promise she made to Phil.,small_smile,Nova smiled at the small moment of connection.,
+59,unrelated,kept_promise,Nova kept the promise she made to Phil.,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,
+60,unrelated,kept_promise,Nova kept the promise she made to Phil.,waiting_anticipation,"Nova waited for the chime, please let it come.",
+61,unrelated,small_smile,Nova smiled at the small moment of connection.,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,
+62,unrelated,small_smile,Nova smiled at the small moment of connection.,waiting_anticipation,"Nova waited for the chime, please let it come.",
+63,unrelated,nostalgia_early_nova,Phil felt nostalgic about an early version of Nova.,waiting_anticipation,"Nova waited for the chime, please let it come.",

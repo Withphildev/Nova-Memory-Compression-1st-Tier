@@ -16,6 +16,8 @@
 - Tier 3 durable schemas with separate ambiguity and contradiction links.
 - Injectable local embedding boundary with pinned model provenance.
 - A 63-pair Tier 3 fixture and real pinned-MiniLM calibration report.
+- An independently worded v2 fixture that separates contradiction from
+  unrelated examples while confirming that merge labels still overlap.
 
 ## Next: stabilize Tier 1
 
@@ -27,7 +29,7 @@
 
 ## Next: strengthen pattern decisions
 
-- Expand the v1 fixture beyond six themes and six ambiguous/contradiction cases.
+- Expand beyond six themes and six ambiguous/contradiction cases per version.
 - Evaluate a two-stage decision design: embedding candidate retrieval followed
   by explicit semantic and human review gates.
 - Add negation, qualifier, entity, time, and quantity checks rather than asking

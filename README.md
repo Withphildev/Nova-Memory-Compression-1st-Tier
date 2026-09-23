@@ -1,7 +1,7 @@
 # Nova Memory Compression — HYDRANGEA Tier 1
 
 [![Tests](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml/badge.svg)](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml)
-![Version](https://img.shields.io/badge/version-v2.5.0-blue)
+![Version](https://img.shields.io/badge/version-v2.6.0-blue)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey)
 
 A reference implementation of the first semantic-distillation layer from the
@@ -167,6 +167,13 @@ python src/calibrate_tier3.py \
 Its label ranges overlap, so it intentionally does not recommend or enable a
 global merge threshold. MiniLM is suitable for candidate retrieval here, not a
 standalone merge or contradiction decision.
+
+Calibration v2 preserves the same structure but independently rewords the
+ambiguous and contradiction pairs. It reduces the measured overlap from five
+of six range comparisons to four of six and separates contradiction from
+unrelated examples. Same-pattern examples still overlap contradictions, so the
+no-auto-merge decision remains unchanged. Both fixtures and reports are kept as
+append-only calibration evidence.
 
 ## Tests
 

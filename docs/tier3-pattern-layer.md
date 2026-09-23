@@ -2,7 +2,7 @@
 
 ## Status
 
-Release 2.5.0 implements the Tier 3 persistence schema and an injectable local
+Release 2.6.0 implements the Tier 3 persistence schema and an injectable local
 embedding boundary. It does **not** cluster memories, assign similarity bands,
 merge instances, or detect contradictions.
 
@@ -106,6 +106,35 @@ Decision: retain MiniLM for candidate retrieval, keep auto-merge disabled, and
 do not infer contradiction from embedding similarity. The complete pair-level
 scores and reproducibility metadata are in
 `docs/tier3_calibration_results_v1.json`.
+
+## Calibration v2 comparison
+
+V2 preserves all 63 labels, the six clusters, the same-pattern paraphrases,
+and the unrelated pairs. It replaces only the ambiguous and contradiction
+sentences with independently worded claims rather than minimal edits. V1 is
+retained as evidence of the surface-overlap failure mode.
+
+The same pinned model and runtime produced:
+
+| Label | V1 range | V1 mean | V2 range | V2 mean |
+| --- | ---: | ---: | ---: | ---: |
+| Same pattern | 0.4754–0.9488 | 0.7873 | 0.4754–0.9488 | 0.7873 |
+| Ambiguous | 0.8710–0.9845 | 0.9296 | 0.6739–0.8790 | 0.7838 |
+| Contradiction | 0.5790–0.9552 | 0.8265 | 0.6571–0.8417 | 0.7334 |
+| Unrelated | 0.1996–0.6281 | 0.4428 | 0.1996–0.6281 | 0.4428 |
+
+The independently worded fixture meaningfully reduces the inflated similarity
+of ambiguous and contradictory pairs. V2 has four overlapping range checks,
+down from five in v1, and contradiction now clears unrelated by a narrow
+`0.0290` margin (`0.6571 > 0.6281`). This confirms that part of v1's negative
+result was caused by surface-form leakage.
+
+The core finding survives: same-pattern still overlaps contradiction, ambiguous,
+and unrelated ranges. A global cosine threshold would reject valid paraphrases
+or accept incorrect relationships. MiniLM remains a candidate generator, while
+semantic role, negation, qualifier, and human-review stages must make durable
+merge and contradiction decisions. The full v2 report is in
+`docs/tier3_calibration_results_v2.json`.
 
 ## Not included in JavaScript
 

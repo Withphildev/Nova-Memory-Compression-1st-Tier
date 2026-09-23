@@ -36,6 +36,13 @@ Five of the six pairwise label-range checks overlap. This is a valid negative
 calibration result: MiniLM similarity cannot safely choose a merge threshold or
 detect contradiction for this fixture. No policy thresholds were set.
 
+Calibration v2 keeps the same 63-label structure while independently wording
+the ambiguous and contradiction examples. Its real run reduces overlap to four
+of six range comparisons and creates a narrow contradiction-versus-unrelated
+gap, demonstrating that v1 contained surface-form inflation. Same-pattern still
+overlaps contradiction, so the merge-policy conclusion is unchanged. V1 and v2
+fixtures and reports remain available as separate evidence artifacts.
+
 ## Historical results
 
 `test-results-summary.txt` records experiments performed before the current
