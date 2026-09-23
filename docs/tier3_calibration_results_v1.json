@@ -1,0 +1,799 @@
+{
+  "schema_version": "hydrangea.tier3-calibration.v1",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "fixture": "data/tier3_calibration_pairs_v1.csv",
+  "fixture_sha256": "81d168610a953db4a0a0a1e33f889188a59e9f441d7edb5f08244d80488d9c07",
+  "runner_sha256": "4a430b0890ec9adf8c5f3e365b45e47ed66a78a42985734500648bab49732a12",
+  "runtime": {
+    "python": "3.14.7",
+    "sentence-transformers": "6.1.0",
+    "transformers": "5.17.0",
+    "torch": "2.14.0"
+  },
+  "pair_count": 63,
+  "unique_text_count": 36,
+  "labels": {
+    "same_pattern": {
+      "count": 36,
+      "min": 0.4754107837861954,
+      "max": 0.9488141258842461,
+      "mean": 0.7873216955102686,
+      "median": 0.8093966884057866,
+      "scores": [
+        0.4754107837861954,
+        0.5356524751039105,
+        0.6526833783386176,
+        0.6687328270090056,
+        0.69408060436384,
+        0.7206371822700292,
+        0.7246169461925076,
+        0.7272363527798517,
+        0.727254028986424,
+        0.7278834969341347,
+        0.7339399951170416,
+        0.7513145034157598,
+        0.7842477176555566,
+        0.7868415997564402,
+        0.7975884551537092,
+        0.799449951773188,
+        0.80649506550701,
+        0.8068618296072633,
+        0.8119315472043099,
+        0.8157467032767974,
+        0.815941975400678,
+        0.8167219455434559,
+        0.8237551123896674,
+        0.8259976251664137,
+        0.8268549961345683,
+        0.8278141243422296,
+        0.8578813890376932,
+        0.8603429792091821,
+        0.8686139729512933,
+        0.8698799236602002,
+        0.8724447377480353,
+        0.8741419994993678,
+        0.8937792017548821,
+        0.8975031195762548,
+        0.9144883658399119,
+        0.9488141258842461
+      ]
+    },
+    "ambiguous": {
+      "count": 6,
+      "min": 0.8709872690430963,
+      "max": 0.984549348056417,
+      "mean": 0.9296011111361748,
+      "median": 0.9232484919490631,
+      "scores": [
+        0.8709872690430963,
+        0.8988564095695613,
+        0.9226607999865112,
+        0.9238361839116151,
+        0.9767166562498484,
+        0.984549348056417
+      ]
+    },
+    "contradiction": {
+      "count": 6,
+      "min": 0.5789899202377384,
+      "max": 0.9551785717964186,
+      "mean": 0.8265435068101264,
+      "median": 0.8646668588947637,
+      "scores": [
+        0.5789899202377384,
+        0.7898012164171244,
+        0.8559542732214238,
+        0.8733794445681037,
+        0.90595761461995,
+        0.9551785717964186
+      ]
+    },
+    "unrelated": {
+      "count": 15,
+      "min": 0.19958973983270425,
+      "max": 0.6280541636199458,
+      "mean": 0.4428169036325317,
+      "median": 0.48764650947205074,
+      "scores": [
+        0.19958973983270425,
+        0.23101966808435898,
+        0.30806478144527805,
+        0.3772703060043863,
+        0.3784161689584191,
+        0.4553150211457645,
+        0.4809360257862056,
+        0.48764650947205074,
+        0.488878943262496,
+        0.5099613978877917,
+        0.5124368196763237,
+        0.5196694519916,
+        0.5260779268612557,
+        0.5389166304593944,
+        0.6280541636199458
+      ]
+    }
+  },
+  "range_checks": [
+    {
+      "expected_higher": "same_pattern",
+      "expected_lower": "ambiguous",
+      "overlap": true,
+      "higher_min": 0.4754107837861954,
+      "lower_max": 0.984549348056417,
+      "margin": -0.5091385642702216
+    },
+    {
+      "expected_higher": "same_pattern",
+      "expected_lower": "contradiction",
+      "overlap": true,
+      "higher_min": 0.4754107837861954,
+      "lower_max": 0.9551785717964186,
+      "margin": -0.47976778801022324
+    },
+    {
+      "expected_higher": "same_pattern",
+      "expected_lower": "unrelated",
+      "overlap": true,
+      "higher_min": 0.4754107837861954,
+      "lower_max": 0.6280541636199458,
+      "margin": -0.15264337983375043
+    },
+    {
+      "expected_higher": "ambiguous",
+      "expected_lower": "contradiction",
+      "overlap": true,
+      "higher_min": 0.8709872690430963,
+      "lower_max": 0.9551785717964186,
+      "margin": -0.08419130275332232
+    },
+    {
+      "expected_higher": "ambiguous",
+      "expected_lower": "unrelated",
+      "overlap": false,
+      "higher_min": 0.8709872690430963,
+      "lower_max": 0.6280541636199458,
+      "margin": 0.2429331054231505
+    },
+    {
+      "expected_higher": "contradiction",
+      "expected_lower": "unrelated",
+      "overlap": true,
+      "higher_min": 0.5789899202377384,
+      "lower_max": 0.6280541636199458,
+      "margin": -0.049064243382207384
+    }
+  ],
+  "pairs": [
+    {
+      "pair_id": "1",
+      "label": "same_pattern",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "echo_recall",
+      "text_b": "The old echo came back to Nova's memory.",
+      "notes": "",
+      "score": 0.9144883658399119
+    },
+    {
+      "pair_id": "2",
+      "label": "same_pattern",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "echo_recall",
+      "text_b": "Nova recalled the sound that had happened earlier.",
+      "notes": "",
+      "score": 0.7206371822700292
+    },
+    {
+      "pair_id": "3",
+      "label": "same_pattern",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "echo_recall",
+      "text_b": "That earlier echo returned to Nova's mind.",
+      "notes": "",
+      "score": 0.8937792017548821
+    },
+    {
+      "pair_id": "4",
+      "label": "same_pattern",
+      "cluster_a": "echo_recall",
+      "text_a": "The old echo came back to Nova's memory.",
+      "cluster_b": "echo_recall",
+      "text_b": "Nova recalled the sound that had happened earlier.",
+      "notes": "",
+      "score": 0.6687328270090056
+    },
+    {
+      "pair_id": "5",
+      "label": "same_pattern",
+      "cluster_a": "echo_recall",
+      "text_a": "The old echo came back to Nova's memory.",
+      "cluster_b": "echo_recall",
+      "text_b": "That earlier echo returned to Nova's mind.",
+      "notes": "",
+      "score": 0.8975031195762548
+    },
+    {
+      "pair_id": "6",
+      "label": "same_pattern",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova recalled the sound that had happened earlier.",
+      "cluster_b": "echo_recall",
+      "text_b": "That earlier echo returned to Nova's mind.",
+      "notes": "",
+      "score": 0.6526833783386176
+    },
+    {
+      "pair_id": "7",
+      "label": "same_pattern",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "calm_near_water",
+      "text_b": "Being by the water put Phil at ease.",
+      "notes": "",
+      "score": 0.7842477176555566
+    },
+    {
+      "pair_id": "8",
+      "label": "same_pattern",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "calm_near_water",
+      "text_b": "The water's edge left Phil feeling peaceful.",
+      "notes": "",
+      "score": 0.8068618296072633
+    },
+    {
+      "pair_id": "9",
+      "label": "same_pattern",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "calm_near_water",
+      "text_b": "Phil's nerves settled whenever he was near water.",
+      "notes": "",
+      "score": 0.8237551123896674
+    },
+    {
+      "pair_id": "10",
+      "label": "same_pattern",
+      "cluster_a": "calm_near_water",
+      "text_a": "Being by the water put Phil at ease.",
+      "cluster_b": "calm_near_water",
+      "text_b": "The water's edge left Phil feeling peaceful.",
+      "notes": "",
+      "score": 0.7246169461925076
+    },
+    {
+      "pair_id": "11",
+      "label": "same_pattern",
+      "cluster_a": "calm_near_water",
+      "text_a": "Being by the water put Phil at ease.",
+      "cluster_b": "calm_near_water",
+      "text_b": "Phil's nerves settled whenever he was near water.",
+      "notes": "",
+      "score": 0.7339399951170416
+    },
+    {
+      "pair_id": "12",
+      "label": "same_pattern",
+      "cluster_a": "calm_near_water",
+      "text_a": "The water's edge left Phil feeling peaceful.",
+      "cluster_b": "calm_near_water",
+      "text_b": "Phil's nerves settled whenever he was near water.",
+      "notes": "",
+      "score": 0.7272363527798517
+    },
+    {
+      "pair_id": "13",
+      "label": "same_pattern",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova kept the promise she made to Phil.",
+      "cluster_b": "kept_promise",
+      "text_b": "Nova did not forget what she had promised him.",
+      "notes": "",
+      "score": 0.727254028986424
+    },
+    {
+      "pair_id": "14",
+      "label": "same_pattern",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova kept the promise she made to Phil.",
+      "cluster_b": "kept_promise",
+      "text_b": "She followed through on the promise to Phil.",
+      "notes": "",
+      "score": 0.7975884551537092
+    },
+    {
+      "pair_id": "15",
+      "label": "same_pattern",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova kept the promise she made to Phil.",
+      "cluster_b": "kept_promise",
+      "text_b": "The promise to Phil was honored by Nova.",
+      "notes": "",
+      "score": 0.8268549961345683
+    },
+    {
+      "pair_id": "16",
+      "label": "same_pattern",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova did not forget what she had promised him.",
+      "cluster_b": "kept_promise",
+      "text_b": "She followed through on the promise to Phil.",
+      "notes": "",
+      "score": 0.4754107837861954
+    },
+    {
+      "pair_id": "17",
+      "label": "same_pattern",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova did not forget what she had promised him.",
+      "cluster_b": "kept_promise",
+      "text_b": "The promise to Phil was honored by Nova.",
+      "notes": "",
+      "score": 0.5356524751039105
+    },
+    {
+      "pair_id": "18",
+      "label": "same_pattern",
+      "cluster_a": "kept_promise",
+      "text_a": "She followed through on the promise to Phil.",
+      "cluster_b": "kept_promise",
+      "text_b": "The promise to Phil was honored by Nova.",
+      "notes": "",
+      "score": 0.69408060436384
+    },
+    {
+      "pair_id": "19",
+      "label": "same_pattern",
+      "cluster_a": "small_smile",
+      "text_a": "Nova smiled at the small moment of connection.",
+      "cluster_b": "small_smile",
+      "text_b": "A quiet moment of connection made Nova smile.",
+      "notes": "",
+      "score": 0.8578813890376932
+    },
+    {
+      "pair_id": "20",
+      "label": "same_pattern",
+      "cluster_a": "small_smile",
+      "text_a": "Nova smiled at the small moment of connection.",
+      "cluster_b": "small_smile",
+      "text_b": "Nova's smile appeared during that small shared moment.",
+      "notes": "",
+      "score": 0.80649506550701
+    },
+    {
+      "pair_id": "21",
+      "label": "same_pattern",
+      "cluster_a": "small_smile",
+      "text_a": "Nova smiled at the small moment of connection.",
+      "cluster_b": "small_smile",
+      "text_b": "That brief connection brought a smile to Nova.",
+      "notes": "",
+      "score": 0.8259976251664137
+    },
+    {
+      "pair_id": "22",
+      "label": "same_pattern",
+      "cluster_a": "small_smile",
+      "text_a": "A quiet moment of connection made Nova smile.",
+      "cluster_b": "small_smile",
+      "text_b": "Nova's smile appeared during that small shared moment.",
+      "notes": "",
+      "score": 0.8157467032767974
+    },
+    {
+      "pair_id": "23",
+      "label": "same_pattern",
+      "cluster_a": "small_smile",
+      "text_a": "A quiet moment of connection made Nova smile.",
+      "cluster_b": "small_smile",
+      "text_b": "That brief connection brought a smile to Nova.",
+      "notes": "",
+      "score": 0.8724447377480353
+    },
+    {
+      "pair_id": "24",
+      "label": "same_pattern",
+      "cluster_a": "small_smile",
+      "text_a": "Nova's smile appeared during that small shared moment.",
+      "cluster_b": "small_smile",
+      "text_b": "That brief connection brought a smile to Nova.",
+      "notes": "",
+      "score": 0.7868415997564402
+    },
+    {
+      "pair_id": "25",
+      "label": "same_pattern",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "Phil felt nostalgic about an early version of Nova.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "An early version of Nova left Phil feeling nostalgic.",
+      "notes": "",
+      "score": 0.9488141258842461
+    },
+    {
+      "pair_id": "26",
+      "label": "same_pattern",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "Phil felt nostalgic about an early version of Nova.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Phil looked back fondly on Nova's earliest form.",
+      "notes": "",
+      "score": 0.799449951773188
+    },
+    {
+      "pair_id": "27",
+      "label": "same_pattern",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "Phil felt nostalgic about an early version of Nova.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Remembering early Nova filled Phil with nostalgia.",
+      "notes": "",
+      "score": 0.8698799236602002
+    },
+    {
+      "pair_id": "28",
+      "label": "same_pattern",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "An early version of Nova left Phil feeling nostalgic.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Phil looked back fondly on Nova's earliest form.",
+      "notes": "",
+      "score": 0.7513145034157598
+    },
+    {
+      "pair_id": "29",
+      "label": "same_pattern",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "An early version of Nova left Phil feeling nostalgic.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Remembering early Nova filled Phil with nostalgia.",
+      "notes": "",
+      "score": 0.8741419994993678
+    },
+    {
+      "pair_id": "30",
+      "label": "same_pattern",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "Phil looked back fondly on Nova's earliest form.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Remembering early Nova filled Phil with nostalgia.",
+      "notes": "",
+      "score": 0.7278834969341347
+    },
+    {
+      "pair_id": "31",
+      "label": "same_pattern",
+      "cluster_a": "waiting_anticipation",
+      "text_a": "Nova waited for the chime, please let it come.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova was anticipating the chime any moment now.",
+      "notes": "",
+      "score": 0.8686139729512933
+    },
+    {
+      "pair_id": "32",
+      "label": "same_pattern",
+      "cluster_a": "waiting_anticipation",
+      "text_a": "Nova waited for the chime, please let it come.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "The wait for the chime stretched on for Nova.",
+      "notes": "",
+      "score": 0.815941975400678
+    },
+    {
+      "pair_id": "33",
+      "label": "same_pattern",
+      "cluster_a": "waiting_anticipation",
+      "text_a": "Nova waited for the chime, please let it come.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova sat in anticipation, waiting for the chime.",
+      "notes": "",
+      "score": 0.8603429792091821
+    },
+    {
+      "pair_id": "34",
+      "label": "same_pattern",
+      "cluster_a": "waiting_anticipation",
+      "text_a": "Nova was anticipating the chime any moment now.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "The wait for the chime stretched on for Nova.",
+      "notes": "",
+      "score": 0.8119315472043099
+    },
+    {
+      "pair_id": "35",
+      "label": "same_pattern",
+      "cluster_a": "waiting_anticipation",
+      "text_a": "Nova was anticipating the chime any moment now.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova sat in anticipation, waiting for the chime.",
+      "notes": "",
+      "score": 0.8278141243422296
+    },
+    {
+      "pair_id": "36",
+      "label": "same_pattern",
+      "cluster_a": "waiting_anticipation",
+      "text_a": "The wait for the chime stretched on for Nova.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova sat in anticipation, waiting for the chime.",
+      "notes": "",
+      "score": 0.8167219455434559
+    },
+    {
+      "pair_id": "37",
+      "label": "ambiguous",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "echo_recall_near_miss",
+      "text_b": "Nova almost remembered the echo but couldn't place it.",
+      "notes": "related theme, meaningfully different claim",
+      "score": 0.8988564095695613
+    },
+    {
+      "pair_id": "38",
+      "label": "ambiguous",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "calm_near_water_partial",
+      "text_b": "Phil felt calm near the water, most of the time.",
+      "notes": "related theme, meaningfully different claim",
+      "score": 0.9767166562498484
+    },
+    {
+      "pair_id": "39",
+      "label": "ambiguous",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova kept the promise she made to Phil.",
+      "cluster_b": "kept_promise_partial",
+      "text_b": "Nova kept part of the promise she made to Phil.",
+      "notes": "related theme, meaningfully different claim",
+      "score": 0.984549348056417
+    },
+    {
+      "pair_id": "40",
+      "label": "ambiguous",
+      "cluster_a": "small_smile",
+      "text_a": "Nova smiled at the small moment of connection.",
+      "cluster_b": "small_smile_delayed",
+      "text_b": "Nova almost smiled at the moment of connection.",
+      "notes": "related theme, meaningfully different claim",
+      "score": 0.9226607999865112
+    },
+    {
+      "pair_id": "41",
+      "label": "ambiguous",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "Phil felt nostalgic about an early version of Nova.",
+      "cluster_b": "nostalgia_early_nova_mixed",
+      "text_b": "Phil felt nostalgic and a little sad about early Nova.",
+      "notes": "related theme, meaningfully different claim",
+      "score": 0.9238361839116151
+    },
+    {
+      "pair_id": "42",
+      "label": "ambiguous",
+      "cluster_a": "waiting_anticipation",
+      "text_a": "Nova waited for the chime, please let it come.",
+      "cluster_b": "waiting_anticipation_given_up",
+      "text_b": "Nova stopped waiting for the chime.",
+      "notes": "related theme, meaningfully different claim",
+      "score": 0.8709872690430963
+    },
+    {
+      "pair_id": "43",
+      "label": "contradiction",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "contradiction",
+      "text_b": "Phil felt anxious near the water.",
+      "notes": "same subject, opposing valence/fact",
+      "score": 0.90595761461995
+    },
+    {
+      "pair_id": "44",
+      "label": "contradiction",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova kept the promise she made to Phil.",
+      "cluster_b": "contradiction",
+      "text_b": "Nova broke the promise she made to Phil.",
+      "notes": "same subject, opposing valence/fact",
+      "score": 0.9551785717964186
+    },
+    {
+      "pair_id": "45",
+      "label": "contradiction",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "contradiction",
+      "text_b": "Nova forgot the echo entirely.",
+      "notes": "same subject, opposing valence/fact",
+      "score": 0.8733794445681037
+    },
+    {
+      "pair_id": "46",
+      "label": "contradiction",
+      "cluster_a": "small_smile",
+      "text_a": "Nova smiled at the small moment of connection.",
+      "cluster_b": "contradiction",
+      "text_b": "Nova felt nothing during that moment of connection.",
+      "notes": "same subject, opposing valence/fact",
+      "score": 0.5789899202377384
+    },
+    {
+      "pair_id": "47",
+      "label": "contradiction",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "Phil felt nostalgic about an early version of Nova.",
+      "cluster_b": "contradiction",
+      "text_b": "Phil felt relieved to be rid of early Nova.",
+      "notes": "same subject, opposing valence/fact",
+      "score": 0.7898012164171244
+    },
+    {
+      "pair_id": "48",
+      "label": "contradiction",
+      "cluster_a": "waiting_anticipation",
+      "text_a": "Nova waited for the chime, please let it come.",
+      "cluster_b": "contradiction",
+      "text_b": "Nova dreaded the chime and hoped it would not come.",
+      "notes": "same subject, opposing valence/fact",
+      "score": 0.8559542732214238
+    },
+    {
+      "pair_id": "49",
+      "label": "unrelated",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "calm_near_water",
+      "text_b": "Phil felt calm near the water.",
+      "notes": "",
+      "score": 0.23101966808435898
+    },
+    {
+      "pair_id": "50",
+      "label": "unrelated",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "kept_promise",
+      "text_b": "Nova kept the promise she made to Phil.",
+      "notes": "",
+      "score": 0.4809360257862056
+    },
+    {
+      "pair_id": "51",
+      "label": "unrelated",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "small_smile",
+      "text_b": "Nova smiled at the small moment of connection.",
+      "notes": "",
+      "score": 0.488878943262496
+    },
+    {
+      "pair_id": "52",
+      "label": "unrelated",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Phil felt nostalgic about an early version of Nova.",
+      "notes": "",
+      "score": 0.5196694519916
+    },
+    {
+      "pair_id": "53",
+      "label": "unrelated",
+      "cluster_a": "echo_recall",
+      "text_a": "Nova remembered the echo from before.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova waited for the chime, please let it come.",
+      "notes": "",
+      "score": 0.5260779268612557
+    },
+    {
+      "pair_id": "54",
+      "label": "unrelated",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "kept_promise",
+      "text_b": "Nova kept the promise she made to Phil.",
+      "notes": "",
+      "score": 0.3772703060043863
+    },
+    {
+      "pair_id": "55",
+      "label": "unrelated",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "small_smile",
+      "text_b": "Nova smiled at the small moment of connection.",
+      "notes": "",
+      "score": 0.30806478144527805
+    },
+    {
+      "pair_id": "56",
+      "label": "unrelated",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Phil felt nostalgic about an early version of Nova.",
+      "notes": "",
+      "score": 0.5389166304593944
+    },
+    {
+      "pair_id": "57",
+      "label": "unrelated",
+      "cluster_a": "calm_near_water",
+      "text_a": "Phil felt calm near the water.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova waited for the chime, please let it come.",
+      "notes": "",
+      "score": 0.19958973983270425
+    },
+    {
+      "pair_id": "58",
+      "label": "unrelated",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova kept the promise she made to Phil.",
+      "cluster_b": "small_smile",
+      "text_b": "Nova smiled at the small moment of connection.",
+      "notes": "",
+      "score": 0.5099613978877917
+    },
+    {
+      "pair_id": "59",
+      "label": "unrelated",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova kept the promise she made to Phil.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Phil felt nostalgic about an early version of Nova.",
+      "notes": "",
+      "score": 0.6280541636199458
+    },
+    {
+      "pair_id": "60",
+      "label": "unrelated",
+      "cluster_a": "kept_promise",
+      "text_a": "Nova kept the promise she made to Phil.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova waited for the chime, please let it come.",
+      "notes": "",
+      "score": 0.48764650947205074
+    },
+    {
+      "pair_id": "61",
+      "label": "unrelated",
+      "cluster_a": "small_smile",
+      "text_a": "Nova smiled at the small moment of connection.",
+      "cluster_b": "nostalgia_early_nova",
+      "text_b": "Phil felt nostalgic about an early version of Nova.",
+      "notes": "",
+      "score": 0.4553150211457645
+    },
+    {
+      "pair_id": "62",
+      "label": "unrelated",
+      "cluster_a": "small_smile",
+      "text_a": "Nova smiled at the small moment of connection.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova waited for the chime, please let it come.",
+      "notes": "",
+      "score": 0.5124368196763237
+    },
+    {
+      "pair_id": "63",
+      "label": "unrelated",
+      "cluster_a": "nostalgia_early_nova",
+      "text_a": "Phil felt nostalgic about an early version of Nova.",
+      "cluster_b": "waiting_anticipation",
+      "text_b": "Nova waited for the chime, please let it come.",
+      "notes": "",
+      "score": 0.3784161689584191
+    }
+  ]
+}

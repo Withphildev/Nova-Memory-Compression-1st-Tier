@@ -161,7 +161,7 @@ class PatternLayerTests(unittest.TestCase):
             def __init__(self, model_name, **kwargs):
                 calls["init"] = (model_name, kwargs)
 
-            def get_sentence_embedding_dimension(self):
+            def get_embedding_dimension(self):
                 return 3
 
             def encode(self, texts, **kwargs):

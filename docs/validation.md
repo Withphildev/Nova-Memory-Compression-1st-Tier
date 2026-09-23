@@ -20,6 +20,21 @@
 - Tier 3 schema invariants, serialization, original-text embedding, model
   provenance, and injected-provider failures are covered without downloading a
   model.
+- The 63-pair Tier 3 calibration fixture is structurally validated, every
+  unique text is embedded once through `PatternEncoder`, and range-overlap math
+  is regression-tested.
+
+## Tier 3 calibration v1
+
+A real local run used `sentence-transformers/all-MiniLM-L6-v2` pinned to
+`1110a243fdf4706b3f48f1d95db1a4f5529b4d41`. The complete report records the
+fixture and runner SHA-256 values, package versions, all pair scores, summary
+statistics, and pairwise range checks in
+`tier3_calibration_results_v1.json`.
+
+Five of the six pairwise label-range checks overlap. This is a valid negative
+calibration result: MiniLM similarity cannot safely choose a merge threshold or
+detect contradiction for this fixture. No policy thresholds were set.
 
 ## Historical results
 
@@ -37,5 +52,5 @@ must not be presented as current CI evidence.
 - Bloom provenance and hallucination tests;
 - privacy, deletion, and source-retention tests;
 - performance and failure-mode measurements.
-- a larger labeled Tier 3 similarity fixture before threshold calibration;
+- broader Tier 3 themes and more adversarial qualifier/negation cases;
 - separately evaluated contradiction detection before automatic links.

@@ -493,7 +493,10 @@ class SentenceTransformerEmbedder:
             device=device,
             local_files_only=local_files_only,
         )
-        self._dimensions = self._model.get_sentence_embedding_dimension()
+        get_dimensions = getattr(self._model, "get_embedding_dimension", None)
+        if get_dimensions is None:
+            get_dimensions = self._model.get_sentence_embedding_dimension
+        self._dimensions = get_dimensions()
 
     @property
     def dimensions(self) -> int | None:

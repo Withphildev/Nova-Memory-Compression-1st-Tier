@@ -2,14 +2,14 @@
 
 ## Status
 
-Release 2.4.0 implements the Tier 3 persistence schema and an injectable local
+Release 2.5.0 implements the Tier 3 persistence schema and an injectable local
 embedding boundary. It does **not** cluster memories, assign similarity bands,
 merge instances, or detect contradictions.
 
 This staging is intentional: the historical 100-row Tier 1 fixture was built
-to validate lexical compression, not semantic similarity. It must be expanded
-with labeled same-pattern, ambiguous, contradictory, and unrelated pairs
-before similarity thresholds can be trusted.
+to validate lexical compression, not semantic similarity. A separate labeled
+Tier 3 fixture now measures same-pattern, ambiguous, contradictory, and
+unrelated pairs without silently turning those measurements into policy.
 
 ## Approved decisions
 
@@ -66,12 +66,46 @@ The schema can retain human-confirmed or future-detector contradiction links,
 but this release contains no contradiction classifier. Similarity alone must
 not be interpreted as contradiction.
 
-### Calibration requires a larger fixture
+### Calibration requires labeled evidence
 
 `merge_threshold` and `ambiguity_threshold` remain `None`, and auto-merge is
-disabled. The next stage is to expand and label the calibration fixture, run
-MiniLM against it, inspect errors, then approve versioned thresholds. Promotion
-at three recurrence links does not bypass that similarity calibration.
+disabled. Promotion at three recurrence links does not bypass similarity
+calibration.
+
+## Calibration v1 result
+
+The v1 fixture contains 63 pairs across six four-phrase thematic clusters:
+
+- 36 same-pattern combinations;
+- 6 deliberately ambiguous near matches;
+- 6 explicit contradictions;
+- all 15 cross-cluster unrelated combinations.
+
+`src/calibrate_tier3.py` embeds each of the 36 unique texts exactly once through
+`PatternEncoder`, calculates cosine similarity, reports per-label statistics,
+and checks every pair of label ranges. It requires an explicit pinned model
+revision and can emit a provenance-stamped JSON report.
+
+The real run used MiniLM revision
+`1110a243fdf4706b3f48f1d95db1a4f5529b4d41` and produced:
+
+| Label | Count | Minimum | Maximum | Mean | Median |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Same pattern | 36 | 0.4754 | 0.9488 | 0.7873 | 0.8094 |
+| Ambiguous | 6 | 0.8710 | 0.9845 | 0.9296 | 0.9232 |
+| Contradiction | 6 | 0.5790 | 0.9552 | 0.8265 | 0.8647 |
+| Unrelated | 15 | 0.1996 | 0.6281 | 0.4428 | 0.4876 |
+
+These ranges overlap. In particular, contradictions can score above true
+same-pattern paraphrases, subtle qualifiers produce extremely high ambiguous
+scores, and the lowest same-pattern score falls below the highest unrelated
+score. Therefore no single cosine threshold can safely implement the approved
+four-way policy on this fixture.
+
+Decision: retain MiniLM for candidate retrieval, keep auto-merge disabled, and
+do not infer contradiction from embedding similarity. The complete pair-level
+scores and reproducibility metadata are in
+`docs/tier3_calibration_results_v1.json`.
 
 ## Not included in JavaScript
 

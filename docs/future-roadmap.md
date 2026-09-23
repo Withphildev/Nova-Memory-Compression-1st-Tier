@@ -15,6 +15,7 @@
 - GitHub Actions validation.
 - Tier 3 durable schemas with separate ambiguity and contradiction links.
 - Injectable local embedding boundary with pinned model provenance.
+- A 63-pair Tier 3 fixture and real pinned-MiniLM calibration report.
 
 ## Next: stabilize Tier 1
 
@@ -24,13 +25,14 @@
 - Benchmark across multiple explicitly named tokenizers instead of
   extrapolating from character counts.
 
-## Next: calibrate the pattern layer
+## Next: strengthen pattern decisions
 
-- Expand the fixture with labeled same-pattern, ambiguous, contradictory, and
-  unrelated pairs; the Tier 1 historical fixture is insufficient.
-- Benchmark the approved MiniLM model against the expanded fixture.
-- Review failure cases before setting merge and ambiguity thresholds.
-- Keep auto-merge disabled until a versioned calibrated policy is approved.
+- Expand the v1 fixture beyond six themes and six ambiguous/contradiction cases.
+- Evaluate a two-stage decision design: embedding candidate retrieval followed
+  by explicit semantic and human review gates.
+- Add negation, qualifier, entity, time, and quantity checks rather than asking
+  cosine similarity to identify contradictions.
+- Keep auto-merge disabled; v1 proves a single global threshold is unsafe.
 - Treat contradiction links as schema-only until a separate detector is
   designed and evaluated.
 

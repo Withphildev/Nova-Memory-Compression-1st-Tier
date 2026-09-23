@@ -1,7 +1,7 @@
 # Nova Memory Compression — HYDRANGEA Tier 1
 
 [![Tests](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml/badge.svg)](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml)
-![Version](https://img.shields.io/badge/version-v2.4.0-blue)
+![Version](https://img.shields.io/badge/version-v2.5.0-blue)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey)
 
 A reference implementation of the first semantic-distillation layer from the
@@ -49,6 +49,7 @@ savings. Actual token counts vary by model and tokenizer.
 | `logic/compression_engine.py` | Tier 1 engine, metadata envelope, and CLI |
 | `src/memory_compression_prototype.py` | Experimental spaCy Tier 2 parser |
 | `src/pattern_layer.py` | Tier 3 schemas and injectable local embedder |
+| `src/calibrate_tier3.py` | Evidence-only Tier 3 calibration runner |
 | `tester/` | Browser-based Tier 1 sandbox |
 | `tests/` | Assertive Python unit and regression tests |
 | `data/memory_compression_comparison_v1.csv` | Historical 100-row benchmark |
@@ -153,6 +154,19 @@ thresholds remain unset and automatic merging is disabled until a larger
 labeled fixture is calibrated. Contradiction links are schema-only in this
 release; there is no contradiction detector yet. See
 [the Tier 3 foundation](docs/tier3-pattern-layer.md).
+
+The first real MiniLM calibration uses 63 labeled pairs and the pinned model
+revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`:
+
+```bash
+python src/calibrate_tier3.py \
+  --revision 1110a243fdf4706b3f48f1d95db1a4f5529b4d41 \
+  --json-output docs/tier3_calibration_results_v1.json
+```
+
+Its label ranges overlap, so it intentionally does not recommend or enable a
+global merge threshold. MiniLM is suitable for candidate retrieval here, not a
+standalone merge or contradiction decision.
 
 ## Tests
 

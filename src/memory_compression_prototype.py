@@ -6,7 +6,7 @@ Implements EchoMemory Layer 2: Pre-Compression in System Code.
 Parses natural language into Subject-Action-Object-Attribute system codes.
 
 Author: Phil & Nova
-Repository release: 2.4.0
+Repository release: 2.5.0
 """
 
 from __future__ import annotations
