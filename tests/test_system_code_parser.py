@@ -67,6 +67,67 @@ class SystemCodeParserTests(unittest.TestCase):
             ["[SUB:UNKNOWN][ACT:DRIVE][OBJ:CAR]"],
         )
 
+    def test_active_coordinate_inherits_passive_clauses_grammatical_subject(self):
+        garage = FakeToken("garage", "NOUN", "pobj")
+        to = FakeToken("to", "ADP", "prep", children=[garage])
+        returned = FakeToken(
+            "returned", "VERB", "conj", lemma="return", children=[to]
+        )
+        man = FakeToken("man", "NOUN", "pobj")
+        by = FakeToken("by", "ADP", "agent", children=[man])
+        car = FakeToken("car", "NOUN", "nsubjpass")
+        driven = FakeToken(
+            "driven",
+            "VERB",
+            "ROOT",
+            lemma="drive",
+            children=[car, by, returned],
+        )
+        returned.head = driven
+        parser = SystemCodeParser(
+            nlp=lambda _text: [car, driven, by, man, returned, to, garage]
+        )
+
+        self.assertEqual(
+            parser.parse("The car was driven by the man and returned to the garage."),
+            [
+                "[SUB:MAN][ACT:DRIVE][OBJ:CAR]",
+                "[SUB:CAR][ACT:RETURN][OBJ:GARAGE]",
+            ],
+        )
+
+    def test_passive_coordinate_inherits_patient_not_semantic_actor(self):
+        garage = FakeToken("garage", "NOUN", "pobj")
+        to = FakeToken("to", "ADP", "prep", children=[garage])
+        was = FakeToken("was", "AUX", "auxpass")
+        returned = FakeToken(
+            "returned", "VERB", "conj", lemma="return", children=[was, to]
+        )
+        man = FakeToken("man", "NOUN", "pobj")
+        by = FakeToken("by", "ADP", "agent", children=[man])
+        car = FakeToken("car", "NOUN", "nsubjpass")
+        driven = FakeToken(
+            "driven",
+            "VERB",
+            "ROOT",
+            lemma="drive",
+            children=[car, by, returned],
+        )
+        returned.head = driven
+        parser = SystemCodeParser(
+            nlp=lambda _text: [car, driven, by, man, was, returned, to, garage]
+        )
+
+        self.assertEqual(
+            parser.parse(
+                "The car was driven by the man and was returned to the garage."
+            ),
+            [
+                "[SUB:MAN][ACT:DRIVE][OBJ:CAR]",
+                "[SUB:UNKNOWN][ACT:RETURN][OBJ:CAR]",
+            ],
+        )
+
     def test_relative_object_resolves_to_local_antecedent(self):
         memory = FakeToken("memory", "NOUN", "ROOT")
         phil = FakeToken("Phil", "PROPN", "nsubj")

@@ -39,6 +39,12 @@ bounded local heuristic for WH relative pronouns inside `relcl` dependencies.
 That heuristic is not general coreference resolution: it does not chase
 pronouns across clauses or sentences.
 
+For subject-less coordinated clauses, Tier 2 inherits the governing clause's
+raw grammatical subject before deciding whether the sibling is active or
+passive. This prevents a passive clause's semantic agent from being assigned to
+an active sibling and prevents an inherited patient from being mislabeled as a
+passive sibling's actor.
+
 ### 3. Pattern layer: foundation implemented
 
 Tier 3 now defines versioned persistence schemas and an injectable local

@@ -6,7 +6,7 @@ Implements EchoMemory Layer 2: Pre-Compression in System Code.
 Parses natural language into Subject-Action-Object-Attribute system codes.
 
 Author: Phil & Nova
-Repository release: 2.6.0
+Repository release: 2.6.1
 """
 
 from __future__ import annotations
@@ -113,9 +113,13 @@ class SystemCodeParser:
             attrs = []
             negated = False
             source_terms = [verb.text]
+            verb_children = list(verb.children)
+            verb_is_passive = any(
+                child.dep_ in ("auxpass", "aux:pass") for child in verb_children
+            )
             
             # Check children of the verb
-            for child in verb.children:
+            for child in verb_children:
                 if child.dep_ == "nsubj":
                     resolved = self._resolve_relative_token(child, verb)
                     subject = resolved.text.upper()
@@ -161,18 +165,26 @@ class SystemCodeParser:
                     attrs.append(child.text.upper())
                     source_terms.append(child.text)
             
+            # A subject-less coordinated verb inherits the governing clause's
+            # grammatical subject, not its already-normalized semantic agent.
+            # For an active sibling that token is the actor; for a passive
+            # sibling it is the patient and must pass through passive
+            # normalization below.
+            if not subject and not passive_patient and verb.head != verb:
+                for child in verb.head.children:
+                    if child.dep_ in ("nsubj", "nsubjpass", "nsubj:pass"):
+                        resolved = self._resolve_relative_token(child, verb.head)
+                        if verb_is_passive:
+                            passive_patient = resolved.text.upper()
+                        else:
+                            subject = resolved.text.upper()
+                        source_terms.append(resolved.text)
+                        break
+
             # Normalize passive voice to semantic agent/action/patient roles.
             if passive_patient:
                 subject = passive_agent
                 obj = passive_patient
-
-            # Inherit subject from a governing verb for coordinated clauses.
-            if not subject and not passive_patient and verb.head != verb:
-                for child in verb.head.children:
-                    if child.dep_ == "nsubj":
-                        resolved = self._resolve_relative_token(child, verb.head)
-                        subject = resolved.text.upper()
-                        source_terms.append(resolved.text)
 
             # Compile semantic tags
             sub_tag = f"[SUB:{subject}]" if subject else "[SUB:UNKNOWN]"

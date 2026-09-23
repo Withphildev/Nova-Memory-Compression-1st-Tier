@@ -53,6 +53,28 @@ class Tier2SpacyIntegrationTests(unittest.TestCase):
             ["[SUB:NOVA][ACT:FORGET_NOT][OBJ:PROMISE]"],
         )
 
+    def test_active_coordinate_inherits_passive_clauses_patient_as_subject(self):
+        self.assertEqual(
+            self.parser.parse(
+                "The car was driven by the man and returned to the garage."
+            ),
+            [
+                "[SUB:MAN][ACT:DRIVE][OBJ:CAR]",
+                "[SUB:CAR][ACT:RETURN][OBJ:GARAGE]",
+            ],
+        )
+
+    def test_passive_coordinate_keeps_inherited_patient_out_of_subject_slot(self):
+        self.assertEqual(
+            self.parser.parse(
+                "The car was driven by the man and was returned to the garage."
+            ),
+            [
+                "[SUB:MAN][ACT:DRIVE][OBJ:CAR]",
+                "[SUB:UNKNOWN][ACT:RETURN][OBJ:CAR]",
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

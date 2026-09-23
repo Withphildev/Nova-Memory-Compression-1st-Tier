@@ -1,7 +1,7 @@
 # Nova Memory Compression — HYDRANGEA Tier 1
 
 [![Tests](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml/badge.svg)](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml)
-![Version](https://img.shields.io/badge/version-v2.6.0-blue)
+![Version](https://img.shields.io/badge/version-v2.6.1-blue)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey)
 
 A reference implementation of the first semantic-distillation layer from the
@@ -137,6 +137,11 @@ produce `[SUB:MAN][ACT:DRIVE][OBJ:CAR]`; an omitted agent is represented as
 inside a local relative clause to the noun modified by that clause. This is not
 general coreference resolution and does not follow pronouns across clauses or
 sentences.
+
+Subject-less coordinated verbs inherit the governing clause's grammatical
+subject before semantic role normalization. This preserves the distinction
+between `the car ... returned` (`SUB:CAR`) and `the car ... was returned`
+(`SUB:UNKNOWN`, `OBJ:CAR`) when the governing clause is passive.
 
 ### Tier 3 pattern foundation
 
