@@ -28,3 +28,18 @@ jobs:
         run: npm test
       - name: Verify historical benchmark
         run: python src/test_engine.py
+
+  tier2-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install Tier 2 dependencies
+        run: python -m pip install -e '.[tier2]'
+      - name: Install spaCy English model
+        run: python -m spacy download en_core_web_sm
+      - name: Run real-model Tier 2 tests
+        run: python -m unittest tests.test_tier2_spacy_integration -v

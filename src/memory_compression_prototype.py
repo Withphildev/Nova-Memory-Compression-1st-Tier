@@ -6,7 +6,7 @@ Implements EchoMemory Layer 2: Pre-Compression in System Code.
 Parses natural language into Subject-Action-Object-Attribute system codes.
 
 Author: Phil & Nova
-Repository release: 2.2.0
+Repository release: 2.3.0
 """
 
 from __future__ import annotations
@@ -66,6 +66,24 @@ class SystemCodeParser:
     def parse(self, text):
         return [code for code, _source_terms in self._parse_doc(self.nlp(text))]
 
+    @staticmethod
+    def _resolve_relative_token(token, verb):
+        """Resolve a local WH relative pronoun to the noun its clause modifies.
+
+        This is intentionally a bounded heuristic, not general coreference
+        resolution. It only handles WDT/WP/WP$ tokens attached within a
+        ``relcl`` whose head is the nearby antecedent noun. It does not resolve
+        pronouns across clauses or sentence boundaries.
+        """
+
+        if (
+            getattr(token, "tag_", "") in {"WDT", "WP", "WP$"}
+            and verb.dep_ == "relcl"
+            and verb.head != verb
+        ):
+            return verb.head
+        return token
+
     def _parse_doc(self, doc):
         results = []
         
@@ -90,20 +108,32 @@ class SystemCodeParser:
         for verb in verbs:
             subject = None
             obj = None
+            passive_patient = None
+            passive_agent = None
             attrs = []
             negated = False
             source_terms = [verb.text]
             
             # Check children of the verb
             for child in verb.children:
-                if child.dep_ in ("nsubj", "nsubjpass", "nsubj:pass"):
-                    subject = child.text.upper()
-                    source_terms.append(child.text)
+                if child.dep_ == "nsubj":
+                    resolved = self._resolve_relative_token(child, verb)
+                    subject = resolved.text.upper()
+                    source_terms.append(resolved.text)
+                elif child.dep_ in ("nsubjpass", "nsubj:pass"):
+                    resolved = self._resolve_relative_token(child, verb)
+                    passive_patient = resolved.text.upper()
+                    source_terms.append(resolved.text)
+                    for gc in resolved.children:
+                        if gc.dep_ == "amod":
+                            attrs.append(gc.text.upper())
+                            source_terms.append(gc.text)
                 elif child.dep_ in ("dobj", "obj", "pobj", "attr", "oprd"):
-                    obj = child.text.upper()
-                    source_terms.append(child.text)
+                    resolved = self._resolve_relative_token(child, verb)
+                    obj = resolved.text.upper()
+                    source_terms.append(resolved.text)
                     # Check for adjective modifiers on the object
-                    for gc in child.children:
+                    for gc in resolved.children:
                         if gc.dep_ == "amod":
                             attrs.append(gc.text.upper())
                             source_terms.append(gc.text)
@@ -112,6 +142,12 @@ class SystemCodeParser:
                     source_terms.append(child.text)
                 elif child.dep_ == "neg":
                     negated = True
+                elif child.dep_ == "agent":
+                    for gc in child.children:
+                        if gc.dep_ in ("pobj", "obj"):
+                            resolved = self._resolve_relative_token(gc, verb)
+                            passive_agent = resolved.text.upper()
+                            source_terms.append(resolved.text)
                 elif child.dep_ == "prep":
                     for gc in child.children:
                         if gc.dep_ == "pobj":
@@ -125,12 +161,18 @@ class SystemCodeParser:
                     attrs.append(child.text.upper())
                     source_terms.append(child.text)
             
-            # Inherit subject from head verb if missing in subordinate clause
-            if not subject and verb.head != verb:
+            # Normalize passive voice to semantic agent/action/patient roles.
+            if passive_patient:
+                subject = passive_agent
+                obj = passive_patient
+
+            # Inherit subject from a governing verb for coordinated clauses.
+            if not subject and not passive_patient and verb.head != verb:
                 for child in verb.head.children:
-                    if child.dep_ in ("nsubj", "nsubjpass", "nsubj:pass"):
-                        subject = child.text.upper()
-                        source_terms.append(child.text)
+                    if child.dep_ == "nsubj":
+                        resolved = self._resolve_relative_token(child, verb.head)
+                        subject = resolved.text.upper()
+                        source_terms.append(resolved.text)
 
             # Compile semantic tags
             sub_tag = f"[SUB:{subject}]" if subject else "[SUB:UNKNOWN]"

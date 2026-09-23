@@ -34,6 +34,11 @@ attributes:
 The current parser is experimental. It does not yet define a stable wire format,
 an ontology, or cross-language behavior.
 
+It normalizes passive voice into semantic agent/action/patient roles and uses a
+bounded local heuristic for WH relative pronouns inside `relcl` dependencies.
+That heuristic is not general coreference resolution: it does not chase
+pronouns across clauses or sentences.
+
 ### 3. Pattern layer: planned
 
 Repeated instances should become a pattern node with links back to every

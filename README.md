@@ -1,7 +1,7 @@
 # Nova Memory Compression — HYDRANGEA Tier 1
 
 [![Tests](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml/badge.svg)](https://github.com/Withphildev/Nova-Memory-Compression-1st-Tier/actions/workflows/test.yml)
-![Version](https://img.shields.io/badge/version-v2.2.0-blue)
+![Version](https://img.shields.io/badge/version-v2.3.0-blue)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey)
 
 A reference implementation of the first semantic-distillation layer from the
@@ -127,6 +127,14 @@ The combined `hydrangea.tier2.v1` envelope carries Tier 1 provenance forward
 and records exact matches between system-code terms and Tier 1 anchors. It does
 not infer that an ordinary subject, object, or attribute is emotionally salient.
 
+Tier 2 normalizes passive voice into semantic agent/action/patient roles. For
+example, both `The man drove the car` and `The car was driven by the man`
+produce `[SUB:MAN][ACT:DRIVE][OBJ:CAR]`; an omitted agent is represented as
+`SUB:UNKNOWN`. A bounded heuristic also resolves `who`, `that`, and `which`
+inside a local relative clause to the noun modified by that clause. This is not
+general coreference resolution and does not follow pronouns across clauses or
+sentences.
+
 ## Tests
 
 ```bash
@@ -135,9 +143,10 @@ npm test
 python src/test_engine.py
 ```
 
-GitHub Actions runs these checks on every push and pull request. Tier 2's parser
-logic is tested with an injected dependency tree, so the normal CI path does not
-need to download a language model.
+GitHub Actions runs these checks on every push and pull request. The fast Tier 2
+tests use injected dependency trees, while a separate integration job installs
+spaCy's English model and verifies passive voice, relative clauses,
+coordination, and negation against real dependency parses.
 
 `src/test_auto.py` and `src/test_tier2.py` are optional, human-readable manual
 diagnostics. Assertive CI coverage lives in `tests/`; the Tier 2 diagnostic also

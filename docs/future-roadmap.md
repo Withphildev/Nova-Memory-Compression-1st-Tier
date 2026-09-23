@@ -7,6 +7,8 @@
 - Bloom-ready JSONL metadata envelope.
 - Tier 1 decision traces, emotional anchors, and Tier 2 handoff envelope.
 - Optional named-tokenizer measurements.
+- Passive-role normalization and bounded local relative-pronoun resolution.
+- Real-model spaCy integration tests in CI.
 - Historical 100-row regression suite.
 - Assertive Python and JavaScript tests.
 - Optional, dependency-injected Tier 2 parser.

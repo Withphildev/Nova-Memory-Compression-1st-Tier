@@ -5,13 +5,14 @@ from src.memory_compression_prototype import SystemCodeParser
 
 
 class FakeToken:
-    def __init__(self, text, pos, dep, lemma=None, children=None):
+    def __init__(self, text, pos, dep, lemma=None, children=None, tag="", head=None):
         self.text = text
         self.pos_ = pos
         self.dep_ = dep
+        self.tag_ = tag
         self.lemma_ = lemma or text.lower()
         self._children = children or []
-        self.head = self
+        self.head = head or self
 
     @property
     def children(self):
@@ -37,6 +38,71 @@ class SystemCodeParserTests(unittest.TestCase):
         parser = SystemCodeParser(nlp=lambda _text: [quiet, workshop])
 
         self.assertEqual(parser.parse("quiet workshop"), ["[SUB:WORKSHOP][ATTR:QUIET]"])
+
+    def test_passive_voice_normalizes_agent_and_patient(self):
+        man = FakeToken("man", "NOUN", "pobj")
+        by = FakeToken("by", "ADP", "agent", children=[man])
+        car = FakeToken("car", "NOUN", "nsubjpass")
+        driven = FakeToken(
+            "driven",
+            "VERB",
+            "ROOT",
+            lemma="drive",
+            children=[car, by],
+        )
+        parser = SystemCodeParser(nlp=lambda _text: [car, driven, by, man])
+
+        self.assertEqual(
+            parser.parse("The car was driven by the man."),
+            ["[SUB:MAN][ACT:DRIVE][OBJ:CAR]"],
+        )
+
+    def test_agentless_passive_preserves_patient_without_inventing_agent(self):
+        car = FakeToken("car", "NOUN", "nsubjpass")
+        driven = FakeToken("driven", "VERB", "ROOT", lemma="drive", children=[car])
+        parser = SystemCodeParser(nlp=lambda _text: [car, driven])
+
+        self.assertEqual(
+            parser.parse("The car was driven."),
+            ["[SUB:UNKNOWN][ACT:DRIVE][OBJ:CAR]"],
+        )
+
+    def test_relative_object_resolves_to_local_antecedent(self):
+        memory = FakeToken("memory", "NOUN", "ROOT")
+        phil = FakeToken("Phil", "PROPN", "nsubj")
+        that = FakeToken("that", "PRON", "obj", tag="WDT")
+        described = FakeToken(
+            "described",
+            "VERB",
+            "relcl",
+            lemma="describe",
+            children=[phil, that],
+            head=memory,
+        )
+        parser = SystemCodeParser(nlp=lambda _text: [memory, phil, that, described])
+
+        self.assertEqual(
+            parser.parse("The memory that Phil described was vivid."),
+            ["[SUB:PHIL][ACT:DESCRIBE][OBJ:MEMORY]"],
+        )
+
+    def test_relative_subject_resolves_to_local_antecedent(self):
+        man = FakeToken("man", "NOUN", "ROOT")
+        who = FakeToken("who", "PRON", "nsubj", tag="WP")
+        smiled = FakeToken(
+            "smiled",
+            "VERB",
+            "relcl",
+            lemma="smile",
+            children=[who],
+            head=man,
+        )
+        parser = SystemCodeParser(nlp=lambda _text: [man, who, smiled])
+
+        self.assertEqual(
+            parser.parse("The man who smiled remembered the echo."),
+            ["[SUB:MAN][ACT:SMILE]"],
+        )
 
     def test_parse_result_uses_original_and_marks_only_real_anchors(self):
         echo = FakeToken("echo", "NOUN", "obj")

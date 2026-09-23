@@ -12,6 +12,9 @@
   dependency parsing still uses the retained original.
 - CSV and JSONL exports are exercised in temporary directories.
 - Tier 2 tag extraction is tested without requiring a downloaded spaCy model.
+- A separate CI integration job installs the real spaCy English model and
+  verifies active/passive equivalence, agentless passives, local relative
+  clauses, coordination, and negation.
 - The browser engine has direct Node.js assertions for compression, mode
   detection, punctuation splitting, and all 100 historical fixture rows.
 
